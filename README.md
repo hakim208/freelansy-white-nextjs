@@ -1,37 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📄 Техники ТЗ — Платформаи фриланс барои Тоҷикистон
 
-## Getting Started
+## 🔰 1. Номи лоиҳа:
+**freelansy** – Платформа барои пайваст кардани мизоҷон ва фрилансерҳо дар Тоҷикистон.
 
-First, run the development server:
+## 🎯 2. Мақсад ва вазифаҳо:
+- Мизоҷ метавонад заказ диҳад.
+- Фрилансер метавонад дархостро қабул кунад.
+- Лоиҳа дорои чат, отзив ва login мебошад.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🧑‍💻 3. Навъи истифодабарандаҳо:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Намуд      | Иқтидорҳо |
+|------------|-----------|
+| 🟢 Client  | Эҷоди заказ, дидани фрилансерҳо, муошират |
+| 🔵 Freelancer | Apply, қабул кардан, чат |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ 4. Технологияҳо:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Frontend: Next.js, Tailwind CSS, Magic UI, shadcn/ui
+- Backend: MockAPI.io
+- Auth: NextAuth ё Custom
+- Hosting: Vercel
 
-## Learn More
+## 📦 5. Функсияҳо:
 
-To learn more about Next.js, take a look at the following resources:
+### 🔐 Auth:
+- Воридшавӣ, бақайдгирӣ (2 навъи корбар)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🏠 Саҳифаи асосӣ:
+- Листи корҳо
+- Ҷустуҷӯ ва филтрҳо
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🧾 Заказҳо:
+- Илова ва қабули заказ
 
-## Deploy on Vercel
+### 💬 Чат:
+- Паёмҳо байни Client ва Freelancer
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 👤 Профил:
+- Маълумот ва рейтинг
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# freelansy-white-nextjs
+### ⭐ Отзив:
+- Feedback system
+
+## 🖼️ 6. UI Компонентҳо:
+
+- Header
+- JobCard
+- ChatBox
+- ProfileCard
+- FeedbackModal
+- JobForm
+
+## 🗂️ 7. Сохтори фолдер:
+
+/app
+/auth
+/dashboard
+/jobs
+/chat
+/profile
+/orders
+/components
+/constants
+/lib
+/mocks
+
+
+## 🛠️ 8. Mock API таблисаҳо:
+
+- users
+- jobs
+- applications
+- messages
+- feedback
+
+## 🗓️ 9. Рӯйхати корҳо (7 рӯз):
+
+| Рӯз | Вазифаҳо |
+|-----|----------|
+| 1   | Auth ва user role |
+| 2   | Header ва dashboard |
+| 3   | Job илова кардан |
+| 4   | Job feed ва apply |
+| 5   | Чат (mock) |
+| 6   | Профил ва feedback |
+| 7   | Responsive ва deploy
