@@ -42,6 +42,10 @@ const Orders = () => {
     router.push(`/orders/${userId}`)
   }
 
+  const clients = data.filter(u => u.roleUser === "client").map(u => u.id);
+
+  const clientOrders = filteredOrders.filter(order => clients.includes(order.userId));
+
   return (
     <ProtectedRoute>
       <div className='pt-[100px] w-[80%] m-auto'>
@@ -75,46 +79,49 @@ const Orders = () => {
               {filteredOrders.length === 0 && (
                 <p className="w-full text-center text-gray-500">Ничего не найдено</p>
               )}
-              {filteredOrders.map(({ userId, name, surname, img, order }, index) => (
-                <div
-                  key={`${userId}-${index}`}
-                  onClick={() => onOrderClick(userId, order.ordersId)}
-                  className="p-4 hover:scale-105 transition-transform duration-200 cursor-pointer border w-[32%] flex flex-col gap-[15px] rounded-lg bg-white"
-                >
-                  <div className='flex items-start w-full justify-between '>
-                    <Image
-                      src={img && img.trim() !== "" ? img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                      alt="avatar"
-                      className="rounded-full mb-2"
-                      width={30}
-                      height={30}
-                    />
-                    <div className='flex items-center gap-[5px] '>
-                      <div className='text-[12px] flex items-center gap-[10px] font-medium '>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 text-purple-800 ">
-                          <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
-                          <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clipRule="evenodd" />
-                        </svg>
-                        {new Date(order.startDate).toLocaleDateString("ru-RU", {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric"
-                        })}
+              {
+                clientOrders.map(({ userId, name, surname, img, order }, index) => (
+                  <div
+                    key={`${userId}-${index}`}
+                    onClick={() => onOrderClick(userId, order.ordersId)}
+                    className="p-4 hover:scale-105 transition-transform duration-200 cursor-pointer border w-[31%] flex flex-col gap-[15px] rounded-lg bg-white"
+                  >
+                    <div className='flex items-start w-full justify-between '>
+                      <Image
+                        src={img && img.trim() !== "" ? img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
+                        alt="avatar"
+                        className="rounded-full mb-2"
+                        width={30}
+                        height={30}
+                      />
+                      <div className='flex items-center gap-[5px] '>
+                        <div className='text-[12px] flex items-center gap-[10px] font-medium '>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 text-purple-800 ">
+                            <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                            <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clipRule="evenodd" />
+                          </svg>
+                          {new Date(order.startDate).toLocaleDateString("ru-RU", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric"
+                          })}
+                        </div>
                       </div>
                     </div>
+                    <p className="text-[15px] font-bold text-purple-800">{name} {surname}</p>
+                    <div className='bg-purple-50 h-[50px] p-2 rounded-lg mb-2 overflow-hidden'>
+                      <p className="text-sm text-gray-700 mb-1 font-medium truncate">
+                        {order.skills}
+                      </p>
+                    </div>
+                    <div className='flex items-center gap-[10px] '>
+                      <p className='font-bold'>{order.amount} TJS</p>
+                    </div>
+                    <Button variant="destructive">Подробнее</Button>
                   </div>
-                  <p className="text-[15px] font-bold text-purple-800">{name} {surname}</p>
-                  <div className='bg-purple-50 h-[50px] p-2 rounded-lg mb-2'>
-                    <p className="text-sm text-gray-700 mb-1 font-medium">
-                      {order.skills}
-                    </p>
-                  </div>
-                  <div className='flex items-center gap-[10px] '>
-                    <p className='font-bold'>{order.amount} TJS</p>
-                  </div>
-                  <Button variant="destructive">Подробнее</Button>
-                </div>
-              ))}
+                )
+                )
+              }
             </div>
           </div>
 

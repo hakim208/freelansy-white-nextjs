@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     const token = localStorage.getItem("acssec_token");
 
-    const allowedRoutesWithToken = ["/orders", "/create-order","/create-order/addOrders"];
+    const allowedRoutesWithToken = ["/orders", "/create-order","/create-order/addOrders","/profile"];
     const allowedRoutesWithoutToken = ["/", "/category", "/help", "/login", "/register"];
 
     if (token) {

@@ -1,7 +1,7 @@
-import type { NextConfig } from "next";
+const path = require('path');
 
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     domains: [
       '43baa55b08d805d5.mokky.dev',
@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
         hostname: 'www.clipartmax.com',
       },
     ],
+  },
+  webpack(config) {
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src');
+    return config;
   },
 };
 

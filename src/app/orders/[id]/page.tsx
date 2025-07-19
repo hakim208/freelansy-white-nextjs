@@ -5,19 +5,57 @@ import { getOrdersAtom } from "@/store/registerSlice"
 import axios from "axios"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import toast, { Toaster } from "react-hot-toast"
 
 const OrderById = () => {
   const params = useParams() as { id: string }
   const { id } = params
   const [data, setData] = useAtom(getOrdersAtom)
   const orderId = localStorage.getItem("ordersId")
+  const roleUser = localStorage.getItem("roleUser")
 
   const userIdFun = data.find((e) => e.id == id)
   const ordersIdFun = userIdFun?.orders.find((e) => e.ordersId === orderId)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  async function addOrder() {
+    try {
+      const user = localStorage.getItem("acssec_token")
+      const clientId = userIdFun?.id;
+
+      const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${user}`)
+      const currentUser = res.data
+
+      const updatedOrders = [...(currentUser.orders || []), {
+        ...ordersIdFun,
+        clientOrderId: Date.now(),
+        pending: false,
+        confirmed: false,
+        clientId: clientId
+      }]
+
+      await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${user}`, {
+        orders: updatedOrders,
+      })
+
+      toast.success('Проект успешно принят!')
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -41,12 +79,12 @@ const OrderById = () => {
   }, [id])
 
 
-
   if (loading) return <div>Загрузка данных...</div>
   if (error) return <div>{error}</div>
 
   return (
     <div className="pt-[100px]">
+      <Toaster />
       <div className="relative w-[70%] mx-auto flex items-center p-10 justify-around rounded-2xl 
           bg-gradient-to-br from-purple-50 via-white to-purple-100
           shadow-[0_10px_30px_-15px_rgba(124,58,237,0.3)]
@@ -128,23 +166,71 @@ const OrderById = () => {
               </div>
               <hr />
               {/* Цена */}
-              <div className="w-full mx-auto my-8 p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-purple-100">
-                <div className="flex flex-col gap-6">
-                  <div className="flex justify-between items-center gap-4">
-                    <h1 className="text-xl font-bold text-gray-800">Цена проекта</h1>
-                    <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg">
-                      <span className="text-2xl font-bold text-purple-600">{ordersIdFun.amount} TJS</span>
+              {
+                roleUser == "freelancer" ? <div className="w-full mx-auto my-8 p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-purple-100">
+                  <div className="flex flex-col gap-6">
+                    <div className="flex justify-between items-center gap-4">
+                      <h1 className="text-xl font-bold text-gray-800">Цена проекта</h1>
+                      <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg">
+                        <span className="text-2xl font-bold text-purple-600">{ordersIdFun.amount} TJS</span>
+                      </div>
                     </div>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild><button className="mt-2 flex items-center justify-center gap-2 w-full py-3 bg-purple-400 hover:bg-purple-500 text-white font-bold rounded-lg transition-all duration-300 shadow-md hover:shadow-purple-300/50 active:scale-[0.98]">
+                        Принять проект
+                      </button></AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Ваш следующий заказ</AlertDialogTitle>
+                          <AlertDialogDescription asChild>
+                            <div className="flex items-center justify-between py-[10px]">
+                              <div className="flex items-start flex-col gap-[4px]">
+                                <p className="font-semibold text-sm text-gray-700">Время выполнения</p>
+                                <div className="flex items-center gap-[5px]">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="size-4 text-purple-500"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                    />
+                                  </svg>
+                                  <span className="font-medium text-sm">{ordersIdFun.projectDetails} дней</span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg">
+                                <span className="text-lg font-bold text-purple-600">{ordersIdFun.amount} TJS</span>
+                              </div>
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Отклонить</AlertDialogCancel>
+                          <AlertDialogAction onClick={addOrder}>Принять</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                  <button className="mt-2 flex items-center justify-center gap-2 w-full py-3 bg-purple-400 hover:bg-purple-500 text-white font-bold rounded-lg transition-all duration-300 shadow-md hover:shadow-purple-300/50 active:scale-[0.98]">
-                    Принять проект
-                  </button>
+                </div> : <div className="flex flex-col items-start gap-[10px] mt-[-30px] ">
+                  <h1 className="text-lg font-bold text-gray-800">Цена проекта</h1>
+                  <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg">
+                    <span className="text-lg font-bold text-purple-600">{ordersIdFun.amount} TJS</span>
+                  </div>
                 </div>
-              </div>
+              }
             </div>
           </>
         ) : (
-          <div>Заказ не найден</div>
+          <div className="text-center text-gray-500 text-lg mt-10">
+            Заказ не найден 😕
+          </div>
         )}
       </div>
     </div>

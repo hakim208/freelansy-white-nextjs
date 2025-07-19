@@ -6,6 +6,7 @@ import axios from 'axios'
 import { useAtom } from 'jotai'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import AddFrelansyOrders from './addFrelansyOrders/page'
 
 const CreateOrder = () => {
   const roleUser = localStorage.getItem("roleUser")
@@ -139,13 +140,8 @@ const ClientView = ({ user, getOrders }) => {
 
 const FreelancerView = ({ user }) => {
   return (
-    <div className="text-center py-10">
-      <h1 className="text-3xl font-bold text-purple-800 mb-4">Фриланс Панель</h1>
-      <p className="text-gray-600 mb-6">Здесь будут отображаться доступные заказы</p>
-      <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-        <h2 className="text-xl font-semibold mb-4">Ваш профиль</h2>
-        <p className="text-gray-700">{user?.name || 'Пользователь'}</p>
-      </div>
+    <div className="">
+      <AddFrelansyOrders/>
     </div>
   )
 }
