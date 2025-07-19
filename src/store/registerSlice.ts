@@ -5,7 +5,6 @@ export const firstNameAtom = atom("")
 export const surNameAtom = atom("")
 export const emailAtom = atom("")
 export const passwordAtom = atom("")
-export const roleAtom = atom("")
 
 export const addOrdersSkillsAtom = atom("")
 export const addOrdersDescriptionAtom = atom("")

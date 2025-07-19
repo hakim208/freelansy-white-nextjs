@@ -1,14 +1,14 @@
 "use client"
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
-import { roleAtom } from '@/store/registerSlice';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import styled from 'styled-components';
 import ImgRegister from './img/customerTwo.webp'
 import Form from './components/register';
+import { useState } from 'react';
 
 const Register = () => {
-    const [role, setRole] = useAtom(roleAtom)
+    const [role, setRole] = useState("")
 
     return (
         <ProtectedRoute>

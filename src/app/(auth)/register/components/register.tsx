@@ -1,10 +1,10 @@
 "use client"
-import React, { FormEvent } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import { Toaster } from 'react-hot-toast'
 import toast from 'react-hot-toast'
-import { emailAtom, firstNameAtom, passwordAtom, roleAtom, surNameAtom } from '@/store/registerSlice';
+import { emailAtom, firstNameAtom, passwordAtom, surNameAtom } from '@/store/registerSlice';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 
