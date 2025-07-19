@@ -33,6 +33,7 @@ const Login = () => {
                 if (res.data && res.data.length > 0) {
                     toast.success(`Добро пожаловать ${name}`)
                     localStorage.setItem("acssec_token", res.data[0].id)
+                    localStorage.setItem("roleUser", res.data[0].roleUser)
                     setTimeout(() => {
                         goToAbout()
                     }, 1000)

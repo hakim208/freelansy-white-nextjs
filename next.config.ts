@@ -8,7 +8,14 @@ const nextConfig: NextConfig = {
       'cdn-icons-png.flaticon.com',
       'images.icon-icons.com',
       'encrypted-tbn0.gstatic.com',
-      'avatar.vercel.sh'
+      'avatar.vercel.sh',
+      'via.placeholder.com'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.clipartmax.com',
+      },
     ],
   },
 };

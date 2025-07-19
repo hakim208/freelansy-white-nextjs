@@ -8,9 +8,14 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import Image from 'next/image'
+
+import Logo from "../../app/images/Снимок экрана 2025-07-06 в 00.44.27.png";
+import { BriefcaseIcon, UserIcon } from 'lucide-react'
 
 const Heder = () => {
   const userId = localStorage.getItem("acssec_token")
+  const roleUser = localStorage.getItem("roleUser")
 
   function logout() {
     localStorage.removeItem("acssec_token")
@@ -22,7 +27,7 @@ const Heder = () => {
       <div>
         {!userId &&
           <div className='w-[90%] m-auto flex items-center justify-between '>
-            <p>hello</p>
+            <Link href={"/"}><Image src={Logo} width={150} height={30} alt='logo' /></Link>
             <div className='flex items-center gap-[30px] '>
               <Navlink href="/">
                 Главная
@@ -45,8 +50,8 @@ const Heder = () => {
           </div>
         }
         {
-          userId && <div className='w-[90%] m-auto flex items-center justify-between '>
-            hello
+          userId && <div className='w-[80%] m-auto flex items-center justify-between '>
+            <Link href={"/orders"}><Image src={Logo} width={150} height={30} alt='logo' /></Link>
             <div className='flex items-center gap-[10px] '>
               <Link href={"/create-order"}>
                 <Button>Мои заказы</Button>
@@ -73,10 +78,29 @@ const Heder = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-56">
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full">
-                      Профил
-                    </Button>
+                  <div className="space-y-2 flex flex-col ">
+                    {
+                      roleUser === "client" ? (
+                        <div className="animate-fade-in bg-gradient-to-br from-purple-50 to-blue-50 p-2 rounded-lg border border-purple-100 shadow-sm">
+                          <h1 className="text-[15px] font-bold text-purple-700 flex items-center gap-2">
+                            <UserIcon className="h-5 w-5" />
+                            Как клиент
+                          </h1>
+                        </div>
+                      ) : (
+                        <div className="animate-fade-in bg-gradient-to-br from-orange-50 to-amber-50 p-2 rounded-lg border border-orange-100 shadow-sm">
+                          <h1 className="text-[15px] font-bold text-orange-700 flex items-center gap-2">
+                            <BriefcaseIcon className="h-5 w-5" />
+                            Как фрилансер
+                          </h1>
+                        </div>
+                      )
+                    }
+                    <Link href={"/profile"}>
+                      <Button variant="outline" className="w-full">
+                        Профил
+                      </Button>
+                    </Link>
                     <Button onClick={logout} variant="destructive" className="w-full">
                       Выйти из аккаунта
                     </Button>
