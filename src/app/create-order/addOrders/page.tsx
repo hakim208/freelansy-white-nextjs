@@ -121,7 +121,7 @@ const AddOrders = () => {
                     className="hover:bg-purple-50"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={category.images} alt={category.name} className="w-5 h-5 object-contain" />
+                     <Image src={category.images} alt={category.name} className="w-5 h-5 object-contain" width={40} height={40} />
                       <span>{category.name}</span>
                     </div>
                   </SelectItem>

@@ -7,44 +7,55 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 type User = {
-  id: number
-  name: string
-  surname: string
-  email: string
-  img?: string
-  roleUser: "client" | "freelancer"
-  orders?: any
-  acceptedWork?: any
-  createdAt: string
-}
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  img?: string;
+  roleUser: "client" | "freelancer";
+  orders?: unknown[];
+  acceptedWork?: unknown[];
+  createdAt: string;
+};
 
 const Profile = () => {
-  const token = Number(localStorage.getItem("acssec_token"))
-  const [data, setData] = useState<User[]>([])
-  const [user, setUser] = useState<User>()
+  const [data, setData] = useState<User[]>([]);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   useEffect(() => {
-    async function getUserProfil() {
+    const tokenStr = localStorage.getItem("acssec_token");
+    if (!tokenStr) return;
+
+    const token = Number(tokenStr);
+    if (isNaN(token)) return;
+
+    async function getUserProfile() {
       try {
-        const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user")        
-        setData(res.data)
+        const res = await axios.get<User[]>(
+          "https://43baa55b08d805d5.mokky.dev/user"
+        );
+        setData(res.data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
 
-    getUserProfil()
-  }, [])
+    getUserProfile();
+  }, []);
 
   useEffect(() => {
-    if (data.length > 0) {
-      const found = data.find((e) => e.id === token)
-      setUser(found)
+    const tokenStr = localStorage.getItem("acssec_token");
+    const token = tokenStr ? Number(tokenStr) : NaN;
+    if (!isNaN(token) && data.length > 0) {
+      const found = data.find((e) => e.id === token);
+      setUser(found);
     }
-  }, [data, token])
+  }, [data]);
 
-  if (!user) return <div className='pt-[100px] text-center text-gray-500'>Загрузка...</div>
-
+  if (!user)
+    return (
+      <div className="pt-[100px] text-center text-gray-500">Загрузка...</div>
+    );
   return (
     <ProtectedRoute>
       <div className='pt-[100px] w-[80%] m-auto '>

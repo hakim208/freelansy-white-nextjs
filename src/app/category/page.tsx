@@ -37,9 +37,7 @@ const Category = () => {
   const router = useRouter()
 
   const [search, setSearch] = useState("")
-  const [min, setMin] = useState("")
-  const [max, setMax] = useState("")
-
+  
   async function getOrders() {
     try {
       const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user")
@@ -77,7 +75,7 @@ const Category = () => {
 
   useEffect(() => {
     getOrders()
-  }, [])
+  }, [getOrders])
 
   const clients = data.filter(u => u.roleUser === "client").map(u => u.id);
 
