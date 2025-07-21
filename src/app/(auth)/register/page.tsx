@@ -1,6 +1,5 @@
 "use client"
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
-import { useAtom } from 'jotai';
 import Image from 'next/image';
 import styled from 'styled-components';
 import ImgRegister from './img/customerTwo.webp'
