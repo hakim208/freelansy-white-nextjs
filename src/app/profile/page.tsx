@@ -13,8 +13,8 @@ type User = {
   email: string
   img?: string
   roleUser: "client" | "freelancer"
-  orders?: any[]
-  acceptedWork?: any[]
+  orders?: any
+  acceptedWork?: any
   createdAt: string
 }
 

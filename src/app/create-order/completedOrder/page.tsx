@@ -27,7 +27,7 @@ const CompletedOrder = () => {
     const [loading, setLoading] = useState(true);
     const [token, setToken] = useState<string | null>(null);
 
-    async function SendOrder(userId: number, clientId: string, orderObj: AcceptedWork, ordersId: string) {
+    async function SendOrder(userId: number, clientId: string, orderObj: AcceptedWork) {
         try {
             const client = order.find(e => e.id === Number(clientId));
             const freelansy = order.find(e => e.id === Number(token));
@@ -155,7 +155,7 @@ const CompletedOrder = () => {
                                     <button className="flex-1 py-2 bg-white text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors">
                                         Отказать
                                     </button>
-                                    <button onClick={() => SendOrder(e.clientOrderId, e.clientId, e, e.clientOrderId)} className="flex-1 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+                                    <button onClick={() => SendOrder(e.clientOrderId, e.clientId, e)} className="flex-1 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
                                         Принять
                                     </button>
                                 </div> : <div className="w-full flex items-center gap-2 bg-green-500/10 p-3 rounded text-green-700">
