@@ -6,7 +6,9 @@ import axios from 'axios'
 import { useAtom } from 'jotai'
 import { getOrdersAtom } from '@/store/registerSlice'
 import Image from 'next/image'
-import { Button } from '@/lib/ui/button'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Search, Calendar, Star, TrendingUp, Users, Award } from "lucide-react"
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
@@ -77,162 +79,250 @@ const Category = () => {
     getOrders()
   }, [])
 
+  const clients = data.filter(u => u.roleUser === "client").map(u => u.id);
+
+  const clientOrders = filteredOrders.filter(order => clients.includes(order.userId));
+
   return (
     <ProtectedRoute>
-      <div className='pt-[100px] w-[80%] m-auto'>
-        {/* Top Controls */}
-        <div className='flex w-full items-center justify-between'>
-          {/* Search */}
-          <div className='w-[56%]'>
-            <div className="w-full relative flex items-center bg-purple-50 hover:bg-purple-100 p-[8px_20px] border border-purple-200 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-300 hover:scale-105 active:scale-95">
-              <input
-                type="text"
-                placeholder="Поиск..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="outline-0 border-0 w-full bg-transparent"
-              />
-              <button className="p-[5px_20px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="size-6" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Min / Max Filter */}
-          <div className='w-[14%]'>
-            <div className="w-full flex items-center gap-[5px] bg-purple-50 hover:bg-purple-100 p-[8px_10px] border border-purple-200 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95">
-              <input
-                type="text"
-                value={min}
-                onChange={(e) => setMin(e.target.value)}
-                className='w-[40%] p-[5px] border-0 outline-0 bg-gray-200 rounded-[5px]'
-                placeholder='min..'
-              />
-              <input
-                type="text"
-                value={max}
-                onChange={(e) => setMax(e.target.value)}
-                className='w-[40%] p-[5px] border-0 outline-0 bg-gray-200 rounded-[5px]'
-                placeholder='max..'
-              />
-              <button className="p-[5px_10px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="size-6" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br pt-[80px] from-slate-50 via-purple-50 to-indigo-50">
+        {/* Header with gradient background */}
+        <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 py-8">
+          <div className="w-[80%] mx-auto">
+            <h1 className="text-3xl font-bold text-white mb-2">Категории заказов</h1>
+            <p className="text-purple-100">Найдите идеальный проект для себя</p>
           </div>
         </div>
 
-        {/* Header */}
-        <div className='flex w-full items-center justify-between p-[20px_0px] '>
-          <h1 className='text-[23px] w-[23%] font-medium text-gray-900 hover:text-purple-400 cursor-pointer transition duration-200'>Категории</h1>
-          <h1 className='text-[23px] w-[56%] font-medium text-gray-900 hover:text-purple-400 cursor-pointer transition duration-200'>Все заказы</h1>
-          <h1 className='text-[23px] font-medium text-gray-900 hover:text-purple-400 cursor-pointer transition duration-200'>Топ фрилансеры</h1>
-        </div>
-
-        {/* List Rendering */}
-        <div className='flex items-start justify-between '>
-          <div className='w-[23%] '></div>
-          <div className='w-[56%]'>
-            <div className="flex flex-wrap justify-between gap-4">
-              {filteredOrders.length === 0 && (
-                <p className="w-full text-center text-gray-500">Ничего не найдено</p>
-              )}
-              {filteredOrders.map(({ userId, name, surname, img, order }, index) => (
-                <div
-                  key={`${userId}-${index}`}
-                  onClick={loginUser}
-                  className="p-4 hover:scale-105 transition-transform duration-200 cursor-pointer border w-[48%] flex flex-col gap-[15px] rounded-lg bg-white"
-                >
-                  <div className='flex items-start w-full justify-between '>
-                    <Image
-                      src={img && img.trim() !== "" ? img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                      alt="avatar"
-                      className="rounded-full mb-2"
-                      width={30}
-                      height={30}
-                    />
-                    <div className='flex items-center gap-[5px] '>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-purple-700 ">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
-                      </svg>
-                      <div className='text-[12px] font-medium '>
-                        {new Date(order.startDate).toLocaleDateString("ru-RU", {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric"
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-[15px] font-bold text-purple-800">{name} {surname}</p>
-
-                  <div className='bg-purple-50 p-2 rounded-lg mb-2'>
-                    <p className="text-sm text-gray-700 mb-1 font-medium">
-                      {order.skills}
-                    </p>
-                    <div className='flex items-center gap-[10px] '>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                        className="size-6 text-purple-600">
-                        <path strokeLinecap="round" strokeLinejoin="round"
-                          d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
-                      </svg>
-                      <p className='font-bold'>{order.amount} TJS</p>
-                    </div>
-                    <Button
-                      variant="destructive"
-                      onClick={(ev) => {
-                        ev.stopPropagation()
-                        alert(`Навыки: ${order.skills}\nОписание: ${order.description}\nСумма: ${order.amount} TJS`)
-                      }}
-                    >
-                      Подробнее
-                    </Button>
-                  </div>
+        <div className="pt-8 w-[80%] mx-auto">
+          {/* Enhanced Search Section */}
+          <div className="flex w-full items-center justify-between mb-8">
+            <div className="w-[56%]">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative flex items-center bg-white/80 backdrop-blur-sm hover:bg-white p-4 border border-purple-200/50 rounded-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-purple-300 hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                  <Search className="w-5 h-5 text-purple-400 mr-3" />
+                  <input
+                    type="text"
+                    placeholder="Поиск проектов, навыков, специалистов..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="outline-0 border-0 w-full bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+                  />
+                  <button className="ml-4 px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg font-medium">
+                    Найти
+                  </button>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 
-          {/* Sidebar for top freelancers and clients */}
-          <div className='w-[15%] flex flex-col gap-[5px] '>
-            <p className='text-[20px] font-bold text-gray-900 mb-2'>Топ фрилансеры</p>
-            {data && data.filter(u => u.roleUser === "freelancer").slice(0, 6).map((e) => (
-              <div
-                key={e.id}
-                className="flex items-center gap-5 p-1 bg-gray-100 rounded-xl hover:scale-110 transition-transform duration-200 cursor-pointer"
-              >
-                <Image
-                  src={e.img && e.img.trim() !== "" ? e.img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                  className="rounded-full"
-                  width={40}
-                  height={40}
-                  alt="photo"
-                />
-                <p className="text-base font-bold">{e.name}</p>
+          {/* Enhanced Section Headers */}
+          <div className="flex w-full items-center justify-between py-6 mb-6">
+            <div className="flex items-center gap-3 group cursor-pointer">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
-            ))}
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-purple-600 bg-clip-text text-transparent hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
+                Все заказы
+              </h1>
+            </div>
 
-            <p className='text-[20px] font-bold text-gray-900 mt-6 mb-2'>Топ заказчики</p>
-            {data && data.filter(u => u.roleUser === "client").slice(0, 6).map((e) => (
-              <div
-                key={e.id}
-                className="flex items-center gap-5 p-1 bg-gray-100 rounded-xl hover:scale-110 transition-transform duration-200 cursor-pointer"
-              >
-                <Image
-                  src={e.img && e.img.trim() !== "" ? e.img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                  className="rounded-full"
-                  width={40}
-                  height={40}
-                  alt="photo"
-                />
-                <p className="text-base font-bold">{e.name}</p>
+            <div className="flex items-center gap-3 group cursor-pointer">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                <Award className="w-5 h-5 text-white" />
               </div>
-            ))}
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent hover:from-orange-600 hover:to-red-600 transition-all duration-300">
+                Топ фрилансеры
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex items-start justify-between gap-8">
+            {/* Enhanced Orders Section */}
+            <div className="w-[78%]">
+              <div className="flex flex-wrap justify-between gap-6">
+                {clientOrders.length === 0 && (
+                  <div className="w-full text-center py-16">
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <p className="text-xl text-gray-500 font-medium">Ничего не найдено</p>
+                    <p className="text-gray-400 mt-2">Попробуйте изменить параметры поиска</p>
+                  </div>
+                )}
+
+                {clientOrders.map(({ userId, name, surname, img, order }, index) => (
+                  <Card
+                    key={`${userId}-${index}`}
+                    onClick={loginUser}
+                    className="group cursor-pointer border-0 w-[31%] bg-white/70 backdrop-blur-sm hover:bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 overflow-hidden"
+                  >
+                    <CardContent className="p-6 relative">
+                      {/* Gradient overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                      <div className="relative z-10">
+                        {/* Header with avatar and date */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                            <Image
+                              src={
+                                img && img.trim() !== ""
+                                  ? img
+                                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"
+                              }
+                              alt="avatar"
+                              className="relative w-[40px] h-[40px] rounded-full border-2 border-white shadow-lg group-hover:scale-110 transition-transform duration-300"
+                              width={40}
+                              height={40}
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2 bg-purple-50 px-3 py-1 rounded-full group-hover:bg-purple-100 transition-colors duration-300">
+                            <Calendar className="w-4 h-4 text-purple-600" />
+                            <span className="text-xs font-medium text-purple-700">
+                              {new Date(order.startDate).toLocaleDateString("ru-RU", {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Client name */}
+                        <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300">
+                          {name} {surname}
+                        </h3>
+
+                        {/* Skills section */}
+                        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 mb-4 group-hover:from-purple-100 group-hover:to-blue-100 transition-all duration-300">
+                          <p className="text-sm text-gray-700 font-medium line-clamp-2 group-hover:text-gray-800 transition-colors duration-300">
+                            {order.skills}
+                          </p>
+                        </div>
+
+                        {/* Price and button */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                              {order.amount}
+                            </span>
+                            <span className="text-sm font-medium text-gray-500">TJS</span>
+                          </div>
+
+                          <Button
+                            variant="destructive"
+                            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 border-0 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                          >
+                            Подробнее
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Enhanced Sidebar */}
+            <div className="w-[20%] space-y-8">
+              {/* Top Freelancers */}
+              <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    {data
+                      .filter((u) => u.roleUser === "freelancer")
+                      .slice(0, 6)
+                      .map((e, index) => (
+                        <div
+                          key={e.id}
+                          className="group flex items-center gap-4 p-3 bg-gradient-to-r from-gray-50 to-orange-50 rounded-xl hover:from-orange-50 hover:to-red-50 hover:scale-105 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+                        >
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                            <Image
+                              src={
+                                e.img && e.img.trim() !== ""
+                                  ? e.img
+                                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"
+                              }
+                              className="relative rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-300"
+                              width={35}
+                              height={35}
+                              alt="photo"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-gray-800 group-hover:text-orange-600 transition-colors duration-300">
+                              {e.name}
+                            </p>
+                            <div className="flex items-center gap-1 mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                              ))}
+                            </div>
+                          </div>
+                          <div className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-medium">
+                            #{index + 1}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Top Clients */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <Users className="w-4 h-4 text-white" />
+                </div>
+                <h2 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-blue-600 bg-clip-text text-transparent">
+                  Топ заказчики
+                </h2>
+              </div>
+              <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    {data
+                      .filter((u) => u.roleUser === "client")
+                      .slice(0, 6)
+                      .map((e, index) => (
+                        <div
+                          key={e.id}
+                          className="group flex items-center gap-4 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl hover:from-blue-50 hover:to-purple-50 hover:scale-105 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+                        >
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                            <Image
+                              src={
+                                e.img && e.img.trim() !== ""
+                                  ? e.img
+                                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"
+                              }
+                              className="relative rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-300"
+                              width={40}
+                              height={40}
+                              alt="photo"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+                              {e.name}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">Активный заказчик</p>
+                          </div>
+                          <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                            #{index + 1}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

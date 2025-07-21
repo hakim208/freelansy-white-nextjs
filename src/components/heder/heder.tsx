@@ -35,8 +35,8 @@ const Heder = () => {
               <Navlink href="/category">
                 Категории
               </Navlink>
-              <Navlink href="/help">
-                Помощь
+              <Navlink href="/about">
+                О нас
               </Navlink>
             </div>
             <div className='flex items-center gap-[20px] '>

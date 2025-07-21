@@ -1,36 +1,42 @@
-"use client"
-import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
-import React, { useEffect, useState } from 'react'
+"use client";
+import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
+import React, { useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import Image from 'next/image'
-import axios from 'axios'
-import { useAtom } from 'jotai'
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Image from 'next/image';
+import axios from 'axios';
+import { useAtom } from 'jotai';
 import {
   addOrdersAmountAtom,
   addOrdersDescriptionAtom,
   addOrdersProjectDetailsAtom,
   addOrdersSkillsAtom,
-  addOrdersStartDateAtom
-} from '@/store/registerSlice'
-import toast, { Toaster } from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
+  addOrdersStartDateAtom,
+} from '@/store/registerSlice';
+import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+
+interface Category {
+  id: number;
+  name: string;
+  images: string;
+}
 
 const AddOrders = () => {
-  const [categories, setCategories] = useState([])
-  const [skills, setSkills] = useAtom(addOrdersSkillsAtom)
-  const [description, setDescription] = useAtom(addOrdersDescriptionAtom)
-  const [projectdetails, setProjectdetails] = useAtom(addOrdersProjectDetailsAtom)
-  const [addCategory, setaddCategory] = useAtom(addOrdersStartDateAtom)
-  const [amount, setAmount] = useAtom(addOrdersAmountAtom)
-  const rout = useRouter()
+  const [categories, setCategories] = useState<Category[]>([]) 
+  const [skills, setSkills] = useAtom(addOrdersSkillsAtom);
+  const [description, setDescription] = useAtom(addOrdersDescriptionAtom);
+  const [projectdetails, setProjectdetails] = useAtom(addOrdersProjectDetailsAtom);
+  const [addCategory, setaddCategory] = useAtom(addOrdersStartDateAtom);
+  const [amount, setAmount] = useAtom(addOrdersAmountAtom);
+  const rout = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -46,10 +52,10 @@ const AddOrders = () => {
 
   async function addOrders() {
     try {
-      const user = localStorage.getItem("acssec_token")
+      const user = localStorage.getItem("acssec_token");
 
-      const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${user}`)
-      const currentUser = res.data
+      const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${user}`);
+      const currentUser = res.data;
 
       const newOrder = {
         category: addCategory,
@@ -59,28 +65,27 @@ const AddOrders = () => {
         projectDetails: projectdetails,
         startDate: new Date().toISOString(),
         amount,
-      }
+      };
 
       if (skills.length > 20 && description.length > 50 && projectdetails.length > 0 && amount.length > 0) {
-        const updatedOrders = [...(currentUser.orders || []), newOrder]
+        const updatedOrders = [...(currentUser.orders || []), newOrder];
 
         await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${user}`, {
           orders: updatedOrders,
-        })
-        toast.success('Successfully toasted!')
+        });
+        toast.success('Ваш заказ опубликован.');
         setTimeout(() => {
-          rout.push("/create-order")
-        }, 1000)
-        setSkills("")
-        setDescription("")
-        setProjectdetails("")
-        setAmount("")
-      }
-      else {
-        toast.error("Пополните карточку!")
+          rout.push("/create-order");
+        }, 1000);
+        setSkills("");
+        setDescription("");
+        setProjectdetails("");
+        setAmount("");
+      } else {
+        toast.error("Пополните карточку!");
       }
     } catch (error) {
-      console.error("Ошибка при добавлении заказа:", error)
+      console.error("Ошибка при добавлении заказа:", error);
     }
   }
 
@@ -91,7 +96,7 @@ const AddOrders = () => {
         <div className='w-[47%] h-[80vh] flex flex-col p-6 border border-gray-200 rounded-xl bg-gradient-to-br from-white to-gray-50 shadow-lg overflow-y-auto'>
           <div className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-800 flex items-center gap-2'>
-              <svg strokeLinecap="round" strokeLinejoin="round"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-purple-600">
+              <svg strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-purple-600">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75A2.25 2.25 0 014.5 4.5h5.379a2.25 2.25 0 011.59.659l1.09 1.091a2.25 2.25 0 001.59.659H19.5a2.25 2.25 0 012.25 2.25v8.25A2.25 2.25 0 0119.5 20.25H4.5A2.25 2.25 0 012.25 18V6.75z" />
               </svg>
               Детали проекта Freelansy
@@ -99,35 +104,33 @@ const AddOrders = () => {
             <p className='text-gray-500 text-sm'>Заполните требования к проекту</p>
           </div>
 
-          {/* Категория */}
+          {/* Категория проекта */}
           <div className='mb-5'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>
               Категория проекта
             </label>
-            <Select>
-              <Select onValueChange={(value) => setaddCategory(value)}>
-                <SelectTrigger className="w-full h-12 border-gray-300 hover:border-purple-400 focus:ring-2 focus:ring-purple-500">
-                  <SelectValue placeholder="Выберите категорию" />
-                </SelectTrigger>
-                <SelectContent className="border-gray-200 shadow-lg">
-                  {categories.map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.name} // ё category.id агар мехоҳӣ ID-ро сабт кунӣ
-                      className="hover:bg-purple-50"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img src={category.images} alt={category.name} className="w-5 h-5 object-contain" />
-                        <span>{category.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Select onValueChange={(value) => setaddCategory(value)}> {/* ✅ Ислоҳ: якта Select истифода бурда шуд */}
+              <SelectTrigger className="w-full h-12 border-gray-300 hover:border-purple-400 focus:ring-2 focus:ring-purple-500">
+                <SelectValue placeholder="Выберите категорию" />
+              </SelectTrigger>
+              <SelectContent className="border-gray-200 shadow-lg">
+                {categories.map((category) => (
+                  <SelectItem
+                    key={category.id}
+                    value={category.name}
+                    className="hover:bg-purple-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img src={category.images} alt={category.name} className="w-5 h-5 object-contain" />
+                      <span>{category.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
 
-          {/* Навыки */}
+          {/* Требуемые навыки */}
           <div className='mb-5'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>Требуемые навыки</label>
             <Textarea
@@ -162,7 +165,7 @@ const AddOrders = () => {
             </div>
           </div>
 
-          {/* Описание */}
+          {/* Описание проекта */}
           <div className='flex-1 flex flex-col'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>Описание</label>
             <Textarea
@@ -174,7 +177,7 @@ const AddOrders = () => {
             <p className="text-xs text-gray-500 mt-2">Разделяйте навыки запятыми</p>
           </div>
 
-          {/* Кнопка */}
+          {/* Кнопка публикации */}
           <button
             onClick={addOrders}
             className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg"
@@ -183,13 +186,13 @@ const AddOrders = () => {
           </button>
         </div>
 
-        {/* Картинка */}
+        {/* Иллюстрация */}
         <div className='w-[47%]'>
           <Image className='w-[100%]' src="https://www.clipartmax.com/png/full/140-1402810_hire-freelancer-find-freelance-jobs-office-365.png" alt='Photo' width={300} height={400} />
         </div>
       </div>
     </ProtectedRoute>
-  )
-}
+  );
+};
 
-export default AddOrders
+export default AddOrders;

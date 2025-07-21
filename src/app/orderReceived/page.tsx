@@ -49,6 +49,8 @@ const OrderReceived = () => {
     const [url, setUrl] = useAtom(urlClientAtom)
     const [description, setDescription] = useAtom(descriptionClientAtom)
     const userOrders = data.find((e) => e.id === token)
+    const name = userOrders?.name || '';
+    const email = userOrders?.email || '';
 
     async function getOrder() {
         try {
@@ -69,7 +71,10 @@ const OrderReceived = () => {
                     clientId: token,
                     url: url,
                     accepted: false,
-                    description:description
+                    description:description,
+                    nameFrelanser:name,
+                    emailFrelanser:email,
+                    clientOrderId:clientOrderId
                 }
             ];
 
@@ -89,7 +94,6 @@ const OrderReceived = () => {
 
             setUrl("")
             setDescription("")
-
             getOrder();
         } catch (error) {
             console.error('Ошибка при отправке заказа:', error);
@@ -163,7 +167,7 @@ const OrderReceived = () => {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Отклонить</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => AcceptedFun(order.clientId, true, order.clientOrderId)} >
+                                            <AlertDialogAction onClick={() => AcceptedFun(order.clientId, true, order.clientOrderId,)}>
                                                 Отправить
                                             </AlertDialogAction>
                                         </AlertDialogFooter>

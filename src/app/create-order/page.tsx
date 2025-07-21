@@ -74,38 +74,47 @@ const ClientView = ({ user, getOrders }) => {
   return (
     <>
       <div className="text-center mb-8">
-        <Button
-          onClick={handleCreateOrder}
-          disabled={creatingOrder}
-          variant="default"
-          className="mx-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6"
-        >
-          {creatingOrder ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Создание...
-            </>
-          ) : (
-            <Link href={"/create-order/addOrders"}>
+        <div className='flex items-center gap-[30px] justify-center '>
+          <Button
+            onClick={handleCreateOrder}
+            disabled={creatingOrder}
+            variant="default"
+            className=" bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6"
+          >
+            {creatingOrder ? (
               <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-5 h-5 inline-block mr-2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Создать заказ
+                Создание...
               </>
-            </Link>
-          )}
-        </Button>
+            ) : (
+              <Link href={"/create-order/addOrders"}>
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5 inline-block mr-2"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Создать заказ
+                </>
+              </Link>
+            )}
+          </Button>
+
+          <Link href={"/create-order/completedOrder"}>
+            <Button variant="default"
+              className="bg-yellow-500 hover:bg-yellow-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6">
+              Готовый заказ
+            </Button>
+          </Link>
+        </div>
 
         <div className="mt-6">
           <h1 className="text-3xl font-bold text-purple-800 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent inline-block">
@@ -141,7 +150,7 @@ const ClientView = ({ user, getOrders }) => {
 const FreelancerView = ({ user }) => {
   return (
     <div className="">
-      <AddFrelansyOrders/>
+      <AddFrelansyOrders />
     </div>
   )
 }

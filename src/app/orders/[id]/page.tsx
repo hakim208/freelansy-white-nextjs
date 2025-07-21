@@ -139,7 +139,7 @@ const OrderById = () => {
               <div className="flex items-center gap-[20px]">
                 <Image
                   src={userIdFun.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                  className="rounded-full"
+                  className="rounded-full w-[50px] h-[50px] "
                   width={50}
                   height={50}
                   alt="photo"

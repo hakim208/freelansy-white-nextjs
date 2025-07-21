@@ -9,7 +9,8 @@ const nextConfig = {
       'images.icon-icons.com',
       'encrypted-tbn0.gstatic.com',
       'avatar.vercel.sh',
-      'via.placeholder.com'
+      'via.placeholder.com',
+      'img.pikbest.com'
     ],
     remotePatterns: [
       {

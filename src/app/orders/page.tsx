@@ -90,7 +90,7 @@ const Orders = () => {
                       <Image
                         src={img && img.trim() !== "" ? img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
                         alt="avatar"
-                        className="rounded-full mb-2"
+                        className="rounded-full w-[30px] h-[30px] mb-2"
                         width={30}
                         height={30}
                       />
