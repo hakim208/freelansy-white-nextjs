@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import axios from 'axios'
 import { useAtom } from 'jotai'
@@ -37,15 +37,15 @@ const Category = () => {
   const router = useRouter()
 
   const [search, setSearch] = useState("")
-  
-  async function getOrders() {
+
+  const getOrders = useCallback((async ()=> {
     try {
       const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user")
       setData(res.data)
     } catch (error) {
       console.error("Ошибка при получении данных:", error)
     }
-  }
+  }), [])
 
   // Создаем плоский массив карточек — каждая карточка = 1 заказ с данными пользователя
   const flatOrders = data.flatMap(user => {
