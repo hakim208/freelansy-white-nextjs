@@ -3,19 +3,36 @@
 import React, { useEffect, useState } from 'react'
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import axios from 'axios'
-import { useAtom } from 'jotai'
-import { getOrdersAtom } from '@/store/registerSlice'
 import Image from 'next/image'
 import { Button } from '@/lib/ui/button'
 import { useRouter } from 'next/navigation'
 
-const Orders = () => {
-  const [data, setData] = useAtom(getOrdersAtom)
-  const [search, setSearch] = useState("")
+interface Order {
+  ordersId: string
+  skills: string
+  amount: number | string
+  description: string
+  startDate: string
+  // добавьте другие поля, если есть
+}
+
+interface User {
+  id: number
+  name: string
+  surname?: string
+  img?: string
+  roleUser: "client" | "freelancer" | string
+  orders?: Order[]
+}
+
+const Orders: React.FC = () => {
+  // Правильно типизируем — массив пользователей
+  const [data, setData] = useState<User[]>([])
+  const [search, setSearch] = useState<string>("")
   const router = useRouter()
 
   useEffect(() => {
-    axios.get("https://43baa55b08d805d5.mokky.dev/user")
+    axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
       .then(res => setData(res.data))
       .catch(err => console.error("Ошибка:", err))
   }, [])
@@ -24,7 +41,7 @@ const Orders = () => {
     user.orders?.map(order => ({
       userId: user.id,
       name: user.name,
-      surname: user.surname,
+      surname: user.surname ?? "",
       img: user.img,
       roleUser: user.roleUser,
       order
@@ -32,7 +49,7 @@ const Orders = () => {
   )
 
   const filteredOrders = flatOrders.filter(({ order }) =>
-    [order.skills, order.amount, order.description].some(field =>
+    [order.skills, String(order.amount), order.description].some(field =>
       field.toLowerCase().includes(search.toLowerCase())
     )
   )
@@ -45,6 +62,7 @@ const Orders = () => {
   const clients = data.filter(u => u.roleUser === "client").map(u => u.id);
 
   const clientOrders = filteredOrders.filter(order => clients.includes(order.userId));
+
 
   return (
     <ProtectedRoute>

@@ -1,8 +1,8 @@
 "use client"
-import { descriptionClientAtom, getOrdersAtom, urlClientAtom } from '@/store/registerSlice';
+import { descriptionClientAtom, urlClientAtom } from '@/store/registerSlice';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -40,28 +40,41 @@ type User = {
         clientId: number
         url: string
         accepted: boolean
+        description?: string
+        nameFrelanser?: string
+        emailFrelanser?: string
+        clientOrderId?: number
     }[]
+    name?: string
+    email?: string
 }
 
 const OrderReceived = () => {
-    const [data, setData] = useAtom<User[]>(getOrdersAtom)
-    const token = Number(localStorage.getItem("acssec_token"))
+    const [data, setData] = useState<User[]>([])
+    const token = localStorage.getItem("acssec_token") || ""
     const [url, setUrl] = useAtom(urlClientAtom)
     const [description, setDescription] = useAtom(descriptionClientAtom)
     const userOrders = data.find((e) => e.id === token)
     const name = userOrders?.name || '';
     const email = userOrders?.email || '';
 
-    async function getOrder() {
-        try {
-            const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
-            setData(data)
-        } catch (error) {
-            console.error(error);
+    useEffect(() => {
+        async function getOrder() {
+            try {
+                const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
+                setData(data)
+            } catch (error) {
+                console.error(error);
+            }
         }
-    }
+        getOrder()
+    }, [setData])
 
     async function AcceptedFun(clientId: number, _pending: boolean, clientOrderId: number) {
+        if (!userOrders) {
+            toast.error("Пользователь не найден")
+            return
+        }
         try {
             const { data: clientUser } = await axios.get<User>(`https://43baa55b08d805d5.mokky.dev/user/${clientId}`);
 
@@ -71,10 +84,10 @@ const OrderReceived = () => {
                     clientId: token,
                     url: url,
                     accepted: false,
-                    description:description,
-                    nameFrelanser:name,
-                    emailFrelanser:email,
-                    clientOrderId:clientOrderId
+                    description: description,
+                    nameFrelanser: name,
+                    emailFrelanser: email,
+                    clientOrderId: clientOrderId
                 }
             ];
 
@@ -82,7 +95,7 @@ const OrderReceived = () => {
                 acceptedWork: updatedAcceptedWork,
             });
 
-            const updatedUserOrders = userOrders?.orders?.map(order =>
+            const updatedUserOrders = userOrders.orders?.map(order =>
                 order.clientOrderId === clientOrderId ? { ...order, pending: true } : order
             );
 
@@ -90,20 +103,18 @@ const OrderReceived = () => {
                 orders: updatedUserOrders,
             });
 
-            await toast.success("Проект успешно отправлен клиенту!")
+            toast.success("Проект успешно отправлен клиенту!")
 
             setUrl("")
             setDescription("")
-            getOrder();
+            // Обновить данные после изменений
+            const { data: newData } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
+            setData(newData)
         } catch (error) {
             console.error('Ошибка при отправке заказа:', error);
+            toast.error("Ошибка при отправке заказа")
         }
     }
-
-
-    useEffect(() => {
-        getOrder()
-    }, [])
 
     return (
         <div className="space-y-4">
@@ -167,7 +178,7 @@ const OrderReceived = () => {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Отклонить</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => AcceptedFun(order.clientId, true, order.clientOrderId,)}>
+                                            <AlertDialogAction onClick={() => AcceptedFun(order.clientId, true, order.clientOrderId)}>
                                                 Отправить
                                             </AlertDialogAction>
                                         </AlertDialogFooter>

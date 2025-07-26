@@ -1,51 +1,73 @@
 "use client"
-import { getOrdersAtom } from '@/store/registerSlice';
 import axios from 'axios';
-import { useAtom } from 'jotai';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
 
 type Order = {
-    ordersId: string
-    projectDetails: string
-    amount: number
-    category?: string
-    startDate?: string
-    skills?: string
-    description?: string
-    confirmed?: boolean
-    pending?: boolean
+    ordersId: string;
+    projectDetails: string;
+    amount: number;
+    category?: string;
+    startDate?: string;
+    skills?: string;
+    description?: string;
+    confirmed?: boolean;
+    pending?: boolean;
 }
 
 type User = {
-    id: string
-    roleUser: string
-    orders?: Order[]
+    id: number;
+    roleUser: string;
+    orders?: Order[];
 }
 
 const OrderConfirmed = () => {
-    const [data, setData] = useAtom<User[]>(getOrdersAtom)
-    const token = Number(localStorage.getItem("acssec_token"))
+    const [data, setData] = useState<User[]>([]);
+    const [token, setToken] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedToken = localStorage.getItem("acssec_token");
+            if (storedToken) {
+                setToken(Number(storedToken));
+            }
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         async function getOrder() {
             try {
+                setLoading(true);
                 const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user");
                 setData(data);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false);
             }
         }
+        if (token !== null) {
+            getOrder();
+        }
+    }, [token]);
 
-        getOrder();
-    }, []);
+    if (token === null) {
+        return <div>Загрузка...</div>; // Можно сделать красивый лоадер
+    }
 
-    const userOrders = data.find((e) => e.id === token)
+    if (loading) {
+        return <div>Загрузка...</div>;
+    }
+
+    const userOrders = data.find((e) => e.id === token);
+
+    const confirmedOrders = userOrders?.orders?.filter(order => order.confirmed && order.pending) ?? [];
 
     return (
         <div className="space-y-4">
-            {userOrders?.orders
-                ?.filter(order => order.confirmed && order.pending)
-                .map((order, index) => (
+            {confirmedOrders.length > 0 ? (
+                confirmedOrders.map((order, index) => (
                     <div
                         key={order.ordersId || index}
                         className="w-full h-[200px] md:h-[230px] bg-gradient-to-br from-white to-purple-50 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border-2 border-purple-200 p-5 mb-4 overflow-hidden flex flex-col hover:scale-[1.01] group"
@@ -79,8 +101,8 @@ const OrderConfirmed = () => {
                             </div>
                         </div>
                     </div>
-                ))}
-            {userOrders?.orders?.filter(order => order.confirmed && order.pending).length === 0 && (
+                ))
+            ) : (
                 <div className="w-full h-[200px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
                     <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -90,7 +112,7 @@ const OrderConfirmed = () => {
                 </div>
             )}
         </div>
-    )
+    );
 }
 
-export default OrderConfirmed
+export default OrderConfirmed;

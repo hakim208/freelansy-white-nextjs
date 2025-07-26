@@ -30,7 +30,7 @@ interface Category {
 }
 
 const AddOrders = () => {
-  const [categories, setCategories] = useState<Category[]>([]) 
+  const [categories, setCategories] = useState<Category[]>([])
   const [skills, setSkills] = useAtom(addOrdersSkillsAtom);
   const [description, setDescription] = useAtom(addOrdersDescriptionAtom);
   const [projectdetails, setProjectdetails] = useAtom(addOrdersProjectDetailsAtom);
@@ -53,6 +53,32 @@ const AddOrders = () => {
   async function addOrders() {
     try {
       const user = localStorage.getItem("acssec_token");
+      if (!user) {
+        toast.error("Пользователь не авторизован");
+        return;
+      }
+
+      // Валидация
+      if (skills.trim().length < 5) {
+        toast.error("Навыки должны содержать минимум 5 символов");
+        return;
+      }
+      if (description.trim().length < 20) {
+        toast.error("Описание должно быть длиннее 20 символов");
+        return;
+      }
+      if (!projectdetails || isNaN(Number(projectdetails)) || Number(projectdetails) <= 0) {
+        toast.error("Введите корректный срок проекта");
+        return;
+      }
+      if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+        toast.error("Введите корректный бюджет");
+        return;
+      }
+      if (!addCategory) {
+        toast.error("Выберите категорию проекта");
+        return;
+      }
 
       const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${user}`);
       const currentUser = res.data;
@@ -64,28 +90,27 @@ const AddOrders = () => {
         description,
         projectDetails: projectdetails,
         startDate: new Date().toISOString(),
-        amount,
+        amount: Number(amount),
       };
 
-      if (skills.length > 20 && description.length > 50 && projectdetails.length > 0 && amount.length > 0) {
-        const updatedOrders = [...(currentUser.orders || []), newOrder];
+      const updatedOrders = [...(currentUser.orders || []), newOrder];
 
-        await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${user}`, {
-          orders: updatedOrders,
-        });
-        toast.success('Ваш заказ опубликован.');
-        setTimeout(() => {
-          rout.push("/create-order");
-        }, 1000);
-        setSkills("");
-        setDescription("");
-        setProjectdetails("");
-        setAmount("");
-      } else {
-        toast.error("Пополните карточку!");
-      }
+      await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${user}`, {
+        orders: updatedOrders,
+      });
+
+      toast.success('Ваш заказ опубликован.');
+      setTimeout(() => {
+        rout.push("/create-order");
+      }, 1000);
+
+      setSkills("");
+      setDescription("");
+      setProjectdetails("");
+      setAmount("");
     } catch (error) {
       console.error("Ошибка при добавлении заказа:", error);
+      toast.error("Произошла ошибка при добавлении заказа");
     }
   }
 
@@ -121,7 +146,7 @@ const AddOrders = () => {
                     className="hover:bg-purple-50"
                   >
                     <div className="flex items-center gap-3">
-                     <Image src={category.images} alt={category.name} className="w-5 h-5 object-contain" width={40} height={40} />
+                      <Image src={category.images} alt={category.name} className="w-5 h-5 object-contain" width={40} height={40} />
                       <span>{category.name}</span>
                     </div>
                   </SelectItem>

@@ -1,8 +1,6 @@
 "use client"
-import { getOrdersAtom } from '@/store/registerSlice';
 import axios from 'axios';
-import { useAtom } from 'jotai';
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 type Order = {
     ordersId: string
@@ -23,21 +21,30 @@ type User = {
 }
 
 const OrderPending = () => {
-    const [data, setData] = useAtom<User[]>(getOrdersAtom)
-    const token = Number(localStorage.getItem("acssec_token"))
+    const [data, setData] = useState<User[]>([])
+    const [token, setToken] = useState<string | null>(null)  // состояние для токена
 
-    async function getOrder() {
+    // Берем токен из localStorage только в клиенте
+    useEffect(() => {
+        const localToken = localStorage.getItem("acssec_token")
+        setToken(localToken)
+    }, [])
+
+    const getOrder = useCallback(async () => {
         try {
             const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
             setData(data)
         } catch (error) {
             console.error(error);
         }
-    }
+    }, [setData])
 
     useEffect(() => {
         getOrder()
-    }, [])
+    }, [getOrder])
+
+    // Ждем, пока token загрузится
+    if (!token) return <div>Загрузка...</div>
 
     const userOrders = data.find((e) => e.id === token)
 

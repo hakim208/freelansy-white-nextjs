@@ -1,4 +1,3 @@
-import { User } from "@/app/category/page";
 import { atom } from "jotai";
 
 export const firstNameAtom = atom("")
@@ -15,7 +14,7 @@ export const addOrdersAmountAtom = atom("")
 export const addPasswordAtom = atom("")
 export const addFirstNameAtom = atom("")
 
-export const getOrdersAtom = atom<User[]>([])
+export const getOrdersAtom = atom([])
 
 export const urlClientAtom = atom("")
 export const descriptionClientAtom = atom("")

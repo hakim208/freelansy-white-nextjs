@@ -22,33 +22,48 @@ interface User {
 }
 
 const CreateOrder: React.FC = () => {
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<User | null>(null)
-  const [roleUser, setRoleUser] = useState<string | null>(null)
-
-  const id = typeof window !== 'undefined' ? localStorage.getItem('acssec_token') : null
-
-  // Функсия барои гирифтани маълумотро мемонем stable бо useCallback
-  const getOrders = useCallback(async () => {
-    try {
-      setLoading(true)
-      const res = await axios.get<User[]>('https://43baa55b08d805d5.mokky.dev/user')
-      const foundUser = res.data.find((e: User) => e.id === id) || null
-      setUser(foundUser)
-      const storedRole = typeof window !== 'undefined' ? localStorage.getItem('roleUser') : null
-      setRoleUser(storedRole)
-    } catch (error) {
-      console.error('Ошибка при получении данных:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [id])
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [roleUser, setRoleUser] = useState<string | null>(null);
+  const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
-    getOrders()
-  }, [getOrders])
+    if (typeof window !== 'undefined') {
+      setId(localStorage.getItem('acssec_token'));
+      setRoleUser(localStorage.getItem('roleUser'));
+    }
+  }, []);
+
+  const getOrders = useCallback(async () => {
+    if (!id) return; // Если id нет, не делать запрос
+
+    try {
+      setLoading(true);
+      const res = await axios.get<User[]>('https://43baa55b08d805d5.mokky.dev/user');
+      const foundUser = res.data.find((e: User) => e.id === id) || null;
+      setUser(foundUser);
+    } catch (error) {
+      console.error('Ошибка при получении данных:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    getOrders();
+  }, [getOrders]);
 
   if (loading || !user || !roleUser) {
+    {
+      return (
+        <ProtectedRoute>
+          <div className="pt-[100px] flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        </ProtectedRoute>
+      );
+    }
+
     return (
       <ProtectedRoute>
         <div className="pt-[100px] flex justify-center items-center h-screen">

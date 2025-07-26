@@ -18,6 +18,7 @@ import React, {
 } from "react";
 
 import { Button } from "../../components/ui/button";
+import { ButtonProps } from "react-day-picker";
 
 type Api = {
   fire: (options?: ConfettiOptions) => void;

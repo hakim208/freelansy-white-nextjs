@@ -19,7 +19,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack(config) {
+  webpack(config: { resolve: { alias: { [x: string]: any; }; }; }) {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src');
     return config;
   },

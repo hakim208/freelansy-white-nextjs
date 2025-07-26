@@ -1,89 +1,114 @@
-"use client"
+"use client";
 
-import React, { useCallback, useEffect, useState } from 'react'
-import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
-import axios from 'axios'
-import Image from 'next/image'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Search, Calendar, Star, TrendingUp, Users, Award } from "lucide-react"
-import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
+import React, { useCallback, useEffect, useState } from "react";
+import ProtectedRoute from "@/components/protectedRoute/protectedRoute";
+import axios from "axios";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Search, Calendar, Star, TrendingUp, Users, Award } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export type Order = {
-  skills: string
-  description: string
-  startDate: string
-  amount: string
-  projectDetails: string
-}
+  skills: string;
+  description: string;
+  startDate: string;
+  amount: string;
+  projectDetails: string;
+};
 
 export type User = {
-  id: number
-  name: string
-  surname: string
-  email: string
-  password: string
-  roleUser: string
-  createdAt: string
-  img: string
-  orders: Order[]
-}
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  roleUser: string;
+  createdAt: string;
+  img: string;
+  orders: Order[];
+};
 
 const Category = () => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState<User[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
- const [data, setData] = useState([]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("acssec_token"); // Или ваш ключ
+      setToken(storedToken);
+    }
+  }, []);
 
   const getOrders = useCallback(async () => {
     try {
-      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user");
+      setIsLoading(true);
+      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setData(res.data);
     } catch (error) {
       console.error("Ошибка при получении данных:", error);
+      toast.error("Ошибка загрузки данных");
+    } finally {
+      setIsLoading(false);
     }
-  }, []); // [] — dependencies, агар setData аз useState бошад, онро илова кардан лозим нест
+  }, [token]);
 
-  // Создаем плоский массив карточек — каждая карточка = 1 заказ с данными пользователя
-  const flatOrders = data.flatMap(user => {
-    if (!user.orders || user.orders.length === 0) return []
-    return user.orders.map(order => ({
+
+  useEffect(() => {
+    getOrders();
+  }, [getOrders]);
+
+  const flatOrders = data.flatMap((user) => {
+    if (!user.orders || user.orders.length === 0) return [];
+    return user.orders.map((order) => ({
       userId: user.id,
       name: user.name,
       surname: user.surname,
       img: user.img,
       roleUser: user.roleUser,
-      order
-    }))
-  })
+      order,
+    }));
+  });
 
   const filteredOrders = flatOrders.filter(({ order }) => {
-    const matchesSearch =
-      order.skills.toLowerCase().includes(search.toLowerCase()) ||
-      order.amount.toLowerCase().includes(search.toLowerCase())
+    const searchLower = search.toLowerCase();
+    return (
+      order.skills.toLowerCase().includes(searchLower) ||
+      order.amount.toLowerCase().includes(searchLower)
+    );
+  });
 
-    return matchesSearch
-  })
+  const clients = data.filter((u) => u.roleUser === "client").map((u) => u.id);
+  const clientOrders = filteredOrders.filter((order) =>
+    clients.includes(order.userId)
+  );
 
   function loginUser() {
-    toast.error("Сначала войдите в систему!")
-    router.push("/login")
+    toast.error("Сначала войдите в систему!");
+    router.push("/login");
   }
 
-  useEffect(() => {
-    getOrders()
-  }, [getOrders])
-
-  const clients = data.filter(u => u.roleUser === "client").map(u => u.id);
-
-  const clientOrders = filteredOrders.filter(order => clients.includes(order.userId));
-
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <div className="pt-[100px] flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br pt-[80px] from-slate-50 via-purple-50 to-indigo-50">
-        {/* Header with gradient background */}
         <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 py-8">
           <div className="w-[80%] mx-auto">
             <h1 className="text-3xl font-bold text-white mb-2">Категории заказов</h1>
@@ -92,7 +117,6 @@ const Category = () => {
         </div>
 
         <div className="pt-8 w-[80%] mx-auto">
-          {/* Enhanced Search Section */}
           <div className="flex w-full items-center justify-between mb-8">
             <div className="w-[56%]">
               <div className="relative group">
@@ -114,7 +138,6 @@ const Category = () => {
             </div>
           </div>
 
-          {/* Enhanced Section Headers */}
           <div className="flex w-full items-center justify-between py-6 mb-6">
             <div className="flex items-center gap-3 group cursor-pointer">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
@@ -136,7 +159,6 @@ const Category = () => {
           </div>
 
           <div className="flex items-start justify-between gap-8">
-            {/* Enhanced Orders Section */}
             <div className="w-[78%]">
               <div className="flex flex-wrap justify-between gap-6">
                 {clientOrders.length === 0 && (
