@@ -2,11 +2,9 @@
 
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import { Button } from '@/components/ui/button'
-import { getOrdersAtom } from '@/store/registerSlice'
 import axios from 'axios'
-import { useAtom } from 'jotai'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import AddFrelansyOrders from './addFrelansyOrders/page'
 
 // TYPES
@@ -30,24 +28,25 @@ const CreateOrder: React.FC = () => {
 
   const id = typeof window !== 'undefined' ? localStorage.getItem('acssec_token') : null
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true)
-        const res = await axios.get<User[]>('https://43baa55b08d805d5.mokky.dev/user')
-        setData(res.data)
-        const foundUser = res.data.find((e: User) => e.id === id) || null
-        setUser(foundUser)
-        const storedRole = localStorage.getItem('roleUser')
-        setRoleUser(storedRole)
-      } catch (error) {
-        console.error('Ошибка при получении данных:', error)
-      } finally {
-        setLoading(false)
-      }
+  // Функсия барои гирифтани маълумотро мемонем stable бо useCallback
+  const getOrders = useCallback(async () => {
+    try {
+      setLoading(true)
+      const res = await axios.get<User[]>('https://43baa55b08d805d5.mokky.dev/user')
+      const foundUser = res.data.find((e: User) => e.id === id) || null
+      setUser(foundUser)
+      const storedRole = typeof window !== 'undefined' ? localStorage.getItem('roleUser') : null
+      setRoleUser(storedRole)
+    } catch (error) {
+      console.error('Ошибка при получении данных:', error)
+    } finally {
+      setLoading(false)
     }
-    fetchOrders()
-  }, [id, setData])
+  }, [id])
+
+  useEffect(() => {
+    getOrders()
+  }, [getOrders])
 
   if (loading || !user || !roleUser) {
     return (
@@ -61,9 +60,9 @@ const CreateOrder: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className='pt-[100px] min-h-screen bg-gray-50'>
-        <div className='w-[90%] md:w-[80%] m-auto'>
-          {roleUser === "client" ? (
+      <div className="pt-[100px] min-h-screen bg-gray-50">
+        <div className="w-[90%] md:w-[80%] m-auto">
+          {roleUser === 'client' ? (
             <ClientView user={user} reload={getOrders} />
           ) : (
             <FreelancerView user={user} />
@@ -87,7 +86,7 @@ const ClientView: React.FC<ClientViewProps> = ({ user, reload }) => {
       setCreatingOrder(true)
       await reload()
     } catch (error) {
-      console.error("Ошибка при создании заказа:", error)
+      console.error('Ошибка при создании заказа:', error)
     } finally {
       setCreatingOrder(false)
     }
@@ -95,7 +94,7 @@ const ClientView: React.FC<ClientViewProps> = ({ user, reload }) => {
 
   return (
     <div className="text-center mb-8">
-      <div className='flex items-center gap-[30px] justify-center'>
+      <div className="flex items-center gap-[30px] justify-center">
         <Link href="/create-order/addOrders">
           <Button
             onClick={handleCreateOrder}
@@ -105,15 +104,38 @@ const ClientView: React.FC<ClientViewProps> = ({ user, reload }) => {
           >
             {creatingOrder ? (
               <>
-                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Создание...
               </>
             ) : (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 inline-block mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-5 h-5 inline-block mr-2"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
                 Создать заказ
@@ -123,7 +145,10 @@ const ClientView: React.FC<ClientViewProps> = ({ user, reload }) => {
         </Link>
 
         <Link href="/create-order/completedOrder">
-          <Button variant="default" className="bg-yellow-500 hover:bg-yellow-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6">
+          <Button
+            variant="default"
+            className="bg-yellow-500 hover:bg-yellow-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6"
+          >
             Готовый заказ
           </Button>
         </Link>
@@ -157,7 +182,14 @@ const FreelancerView: React.FC<{ user: User }> = () => (
 
 const EmptyState: React.FC = () => (
   <div className="mt-10 flex flex-col items-center justify-center">
-    <svg className="w-24 h-24 text-gray-400 opacity-60 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+    <svg
+      className="w-24 h-24 text-gray-400 opacity-60 mb-4"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1}
+      stroke="currentColor"
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
     <h3 className="text-xl font-medium text-gray-500">Заказов пока нет</h3>

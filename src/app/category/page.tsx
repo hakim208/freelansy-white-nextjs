@@ -3,8 +3,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import axios from 'axios'
-import { useAtom } from 'jotai'
-import { getOrdersAtom } from '@/store/registerSlice'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -33,19 +31,20 @@ export type User = {
 }
 
 const Category = () => {
-  const [data, setData] = useAtom(getOrdersAtom)
   const router = useRouter()
 
   const [search, setSearch] = useState("")
 
-  const getOrders = useCallback((async ()=> {
+ const [data, setData] = useState([]);
+
+  const getOrders = useCallback(async () => {
     try {
-      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user")
-      setData(res.data)
+      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user");
+      setData(res.data);
     } catch (error) {
-      console.error("Ошибка при получении данных:", error)
+      console.error("Ошибка при получении данных:", error);
     }
-  }), [])
+  }, []); // [] — dependencies, агар setData аз useState бошад, онро илова кардан лозим нест
 
   // Создаем плоский массив карточек — каждая карточка = 1 заказ с данными пользователя
   const flatOrders = data.flatMap(user => {
