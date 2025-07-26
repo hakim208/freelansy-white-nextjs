@@ -21,11 +21,9 @@ interface Order {
 interface User {
   id: string
   orders: Order[]
-  [key: string]: any
 }
 
 const CreateOrder: React.FC = () => {
-  const [data, setData] = useAtom(getOrdersAtom)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
   const [roleUser, setRoleUser] = useState<string | null>(null)
