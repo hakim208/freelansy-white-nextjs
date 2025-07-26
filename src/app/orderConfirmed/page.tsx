@@ -26,18 +26,18 @@ const OrderConfirmed = () => {
     const [data, setData] = useAtom<User[]>(getOrdersAtom)
     const token = Number(localStorage.getItem("acssec_token"))
 
-    async function getOrder() {
-        try {
-            const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
-            setData(data)
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     useEffect(() => {
-        getOrder()
-    }, [])
+        async function getOrder() {
+            try {
+                const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user");
+                setData(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        getOrder();
+    }, []);
 
     const userOrders = data.find((e) => e.id === token)
 
