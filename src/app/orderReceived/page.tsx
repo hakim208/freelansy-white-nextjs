@@ -51,7 +51,8 @@ type User = {
 
 const OrderReceived = () => {
     const [data, setData] = useState<User[]>([])
-    const token = localStorage.getItem("acssec_token") || ""
+  const token = typeof window !== "undefined" ? localStorage.getItem("acssec_token") : null
+    
     const [url, setUrl] = useAtom(urlClientAtom)
     const [description, setDescription] = useAtom(descriptionClientAtom)
     const userOrders = data.find((e) => e.id === token)

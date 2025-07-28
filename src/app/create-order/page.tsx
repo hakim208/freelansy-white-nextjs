@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,7 @@ const CreateOrder: React.FC = () => {
   const [roleUser, setRoleUser] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
 
+  // Загружаем id и роль из localStorage при монтировании
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setId(localStorage.getItem('acssec_token'));
@@ -34,8 +35,9 @@ const CreateOrder: React.FC = () => {
     }
   }, []);
 
+  // Функция получения заказов пользователя
   const getOrders = useCallback(async () => {
-    if (!id) return; // Если id нет, не делать запрос
+    if (!id) return; // Если нет id, запрос не делаем
 
     try {
       setLoading(true);
@@ -49,28 +51,21 @@ const CreateOrder: React.FC = () => {
     }
   }, [id]);
 
+  // Вызываем getOrders после того, как id загрузился
   useEffect(() => {
-    getOrders();
-  }, [getOrders]);
+    if (id) {
+      getOrders();
+    }
+  }, [id, getOrders]);
 
   if (loading || !user || !roleUser) {
-    {
-      return (
-        <ProtectedRoute>
-          <div className="pt-[100px] flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-          </div>
-        </ProtectedRoute>
-      );
-    }
-
     return (
       <ProtectedRoute>
         <div className="pt-[100px] flex justify-center items-center h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
         </div>
       </ProtectedRoute>
-    )
+    );
   }
 
   return (

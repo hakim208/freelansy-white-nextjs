@@ -1,52 +1,58 @@
-"use client"
-import Image from 'next/image'
-import React, { FormEvent } from 'react'
-import ImgLogin from './img/freelancerThree.webp'
-import LayoutWrapper from '@/components/layoutWrapper'
-import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-button'
-import Imgcongrats from './img/congrats.webp'
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@radix-ui/react-label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/lib/ui/button'
-import { useAtom } from 'jotai'
-import { addFirstNameAtom, addPasswordAtom } from '@/store/registerSlice'
-import axios from 'axios'
-import toast, { Toaster } from 'react-hot-toast'
-import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
+"use client";
+
+import Image from 'next/image';
+import React, { FormEvent } from 'react';
+import ImgLogin from './img/freelancerThree.webp';
+import LayoutWrapper from '@/components/layoutWrapper';
+import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-button';
+import Imgcongrats from './img/congrats.webp';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@radix-ui/react-label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/lib/ui/button';
+import { useAtom } from 'jotai';
+import { addFirstNameAtom, addPasswordAtom } from '@/store/registerSlice';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
+import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
 
 const Login = () => {
-  const [name, setName] = useAtom(addFirstNameAtom)
-  const [password, setPassword] = useAtom(addPasswordAtom)
+  const [name, setName] = useAtom(addFirstNameAtom);
+  const [password, setPassword] = useAtom(addPasswordAtom);
 
   const goToOrders = () => {
-    window.location.href = "/orders"
-  }
+    window.location.href = "/orders";
+  };
 
   const loginUser = async (e: FormEvent) => {
-    e.preventDefault() 
+    e.preventDefault();
+
     if (name.length > 0 && password.length > 0) {
       try {
-        const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user?name=${name}&password=${password}`)
+        const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user?name=${name}&password=${password}`);
         if (res.data && res.data.length > 0) {
-          toast.success(`Добро пожаловать ${name}`)
-          localStorage.setItem("acssec_token", res.data[0].id)
-          localStorage.setItem("roleUser", res.data[0].roleUser)
+          toast.success(`Добро пожаловать ${name}`);
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem("acssec_token", res.data[0].id);
+            localStorage.setItem("roleUser", res.data[0].roleUser);
+          }
+
           setTimeout(() => {
-            goToOrders()
-          }, 1000)
+            goToOrders();
+          }, 1000);
         } else {
-          toast.error('Неверное имя пользователя или пароль')
+          toast.error('Неверное имя пользователя или пароль');
         }
       } catch (error) {
         console.error(error);
-        toast.error('Ошибка при входе')
+        toast.error('Ошибка при входе');
       }
     } else {
-      toast.error('Пожалуйста, заполните все поля')
+      toast.error('Пожалуйста, заполните все поля');
     }
-  }
+  };
 
   return (
     <ProtectedRoute>
@@ -116,7 +122,7 @@ const Login = () => {
         </div>
       </LayoutWrapper>
     </ProtectedRoute>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

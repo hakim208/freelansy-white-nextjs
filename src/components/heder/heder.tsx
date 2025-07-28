@@ -14,8 +14,9 @@ import Logo from "../../app/images/Снимок экрана 2025-07-06 в 00.44
 import { BriefcaseIcon, UserIcon } from 'lucide-react'
 
 const Heder = () => {
-  const userId = localStorage.getItem("acssec_token")
-  const roleUser = localStorage.getItem("roleUser")
+  
+  const userId = typeof window !== "undefined" ? localStorage.getItem("acssec_token") : null
+  const roleUser = typeof window !== "undefined" ? localStorage.getItem("roleUser") : null
 
   function logout() {
     localStorage.removeItem("acssec_token")

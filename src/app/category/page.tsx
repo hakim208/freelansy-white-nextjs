@@ -9,7 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, Calendar, Star, TrendingUp, Users, Award } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useClientStorage } from "@/hooks/useClientStorage";  // Импортируем кастомный хук
 
+// Типҳо
 export type Order = {
   skills: string;
   description: string;
@@ -35,24 +37,15 @@ const Category = () => {
 
   const [search, setSearch] = useState("");
   const [data, setData] = useState<User[]>([]);
-  const [token, setToken] = useState<string | null>(null);
+  const { id: token } = useClientStorage(); // Используем хук вместо прямого localStorage
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("acssec_token"); // Или ваш ключ
-      setToken(storedToken);
-    }
-  }, []);
-
+  // Получение данных с API
   const getOrders = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await axios.get("https://43baa55b08d805d5.mokky.dev/user", { headers });
       setData(res.data);
     } catch (error) {
       console.error("Ошибка при получении данных:", error);
@@ -62,11 +55,11 @@ const Category = () => {
     }
   }, [token]);
 
-
   useEffect(() => {
     getOrders();
   }, [getOrders]);
 
+  // Все заказы с привязкой к пользователям
   const flatOrders = data.flatMap((user) => {
     if (!user.orders || user.orders.length === 0) return [];
     return user.orders.map((order) => ({
@@ -79,6 +72,7 @@ const Category = () => {
     }));
   });
 
+  // Фильтрация заказов по поиску
   const filteredOrders = flatOrders.filter(({ order }) => {
     const searchLower = search.toLowerCase();
     return (
@@ -87,15 +81,19 @@ const Category = () => {
     );
   });
 
+  // Только клиенты
   const clients = data.filter((u) => u.roleUser === "client").map((u) => u.id);
-  const clientOrders = filteredOrders.filter((order) =>
-    clients.includes(order.userId)
-  );
+  const clientOrders = filteredOrders.filter((order) => clients.includes(order.userId));
 
-  function loginUser() {
-    toast.error("Сначала войдите в систему!");
-    router.push("/login");
-  }
+  // Обработчик клика по заказу
+  const handleOrderClick = () => {
+    if (!token) {
+      toast.error("Сначала войдите в систему!");
+      router.push("/login");
+    } else {
+      router.push("/orders");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -106,6 +104,7 @@ const Category = () => {
       </ProtectedRoute>
     );
   }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br pt-[80px] from-slate-50 via-purple-50 to-indigo-50">
@@ -130,7 +129,10 @@ const Category = () => {
                     onChange={(e) => setSearch(e.target.value)}
                     className="outline-0 border-0 w-full bg-transparent text-gray-700 placeholder-gray-400 text-lg"
                   />
-                  <button className="ml-4 px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg font-medium">
+                  <button
+                    className="ml-4 px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg font-medium"
+                    onClick={() => {}} // Тут можно добавить логику поиска по кнопке, если нужно
+                  >
                     Найти
                   </button>
                 </div>
@@ -174,15 +176,13 @@ const Category = () => {
                 {clientOrders.map(({ userId, name, surname, img, order }, index) => (
                   <Card
                     key={`${userId}-${index}`}
-                    onClick={loginUser}
+                    onClick={handleOrderClick}
                     className="group cursor-pointer border-0 w-[31%] bg-white/70 backdrop-blur-sm hover:bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 overflow-hidden"
                   >
                     <CardContent className="p-6 relative">
-                      {/* Gradient overlay on hover */}
                       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                       <div className="relative z-10">
-                        {/* Header with avatar and date */}
                         <div className="flex items-start justify-between mb-4">
                           <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
@@ -211,19 +211,16 @@ const Category = () => {
                           </div>
                         </div>
 
-                        {/* Client name */}
                         <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300">
                           {name} {surname}
                         </h3>
 
-                        {/* Skills section */}
                         <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 mb-4 group-hover:from-purple-100 group-hover:to-blue-100 transition-all duration-300">
                           <p className="text-sm text-gray-700 font-medium line-clamp-2 group-hover:text-gray-800 transition-colors duration-300">
                             {order.skills}
                           </p>
                         </div>
 
-                        {/* Price and button */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
@@ -246,7 +243,7 @@ const Category = () => {
               </div>
             </div>
 
-            {/* Enhanced Sidebar */}
+            {/* Sidebar */}
             <div className="w-[20%] space-y-8">
               {/* Top Freelancers */}
               <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
@@ -346,7 +343,7 @@ const Category = () => {
         </div>
       </div>
     </ProtectedRoute>
-  )
-}
+  );
+};
 
-export default Category
+export default Category;

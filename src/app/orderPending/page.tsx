@@ -21,32 +21,32 @@ type User = {
 }
 
 const OrderPending = () => {
-    const [data, setData] = useState<User[]>([])
-    const [token, setToken] = useState<string | null>(null)  // состояние для токена
+    const [data, setData] = useState<User[]>([]);
+    const [token, setToken] = useState<string | null>(null);
 
-    // Берем токен из localStorage только в клиенте
     useEffect(() => {
-        const localToken = localStorage.getItem("acssec_token")
-        setToken(localToken)
-    }, [])
+        if (typeof window !== "undefined") {
+            const localToken = localStorage.getItem("acssec_token");
+            setToken(localToken);
+        }
+    }, []);
 
     const getOrder = useCallback(async () => {
         try {
-            const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user")
-            setData(data)
+            const { data } = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user");
+            setData(data);
         } catch (error) {
             console.error(error);
         }
-    }, [setData])
+    }, []);
 
     useEffect(() => {
-        getOrder()
-    }, [getOrder])
+        getOrder();
+    }, [getOrder]);
 
-    // Ждем, пока token загрузится
-    if (!token) return <div>Загрузка...</div>
+    if (!token) return <div>Загрузка...</div>;
 
-    const userOrders = data.find((e) => e.id === token)
+    const userOrders = data.find((e) => e.id === token);
 
     return (
         <div className="space-y-4">

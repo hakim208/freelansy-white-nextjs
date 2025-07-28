@@ -1,4 +1,5 @@
 "use client";
+
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
 import React, { useEffect, useState } from 'react';
 import {
@@ -16,9 +17,7 @@ import { useAtom } from 'jotai';
 import {
   addOrdersAmountAtom,
   addOrdersDescriptionAtom,
-  addOrdersProjectDetailsAtom,
   addOrdersSkillsAtom,
-  addOrdersStartDateAtom,
 } from '@/store/registerSlice';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -30,87 +29,107 @@ interface Category {
 }
 
 const AddOrders = () => {
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<Category[]>([]);
   const [skills, setSkills] = useAtom(addOrdersSkillsAtom);
   const [description, setDescription] = useAtom(addOrdersDescriptionAtom);
-  const [projectdetails, setProjectdetails] = useAtom(addOrdersProjectDetailsAtom);
-  const [addCategory, setaddCategory] = useAtom(addOrdersStartDateAtom);
+  const [projectDuration, setProjectDuration] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [amount, setAmount] = useAtom(addOrdersAmountAtom);
-  const rout = useRouter();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
+  // Получаем категории с сервера
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCategories() {
       try {
         const response = await axios.get('https://43baa55b08d805d5.mokky.dev/category');
         setCategories(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке категорий:', error);
+        toast.error('Ошибка при загрузке категорий');
       }
     }
-    fetchData();
+    fetchCategories();
   }, []);
 
   async function addOrders() {
     try {
-      const user = localStorage.getItem("acssec_token");
-      if (!user) {
+      setLoading(true);
+      const userId = localStorage.getItem("acssec_token");
+      if (!userId) {
         toast.error("Пользователь не авторизован");
+        setLoading(false);
         return;
       }
 
       // Валидация
       if (skills.trim().length < 5) {
         toast.error("Навыки должны содержать минимум 5 символов");
+        setLoading(false);
         return;
       }
       if (description.trim().length < 20) {
         toast.error("Описание должно быть длиннее 20 символов");
+        setLoading(false);
         return;
       }
-      if (!projectdetails || isNaN(Number(projectdetails)) || Number(projectdetails) <= 0) {
+      if (!projectDuration || isNaN(Number(projectDuration)) || Number(projectDuration) <= 0) {
         toast.error("Введите корректный срок проекта");
+        setLoading(false);
         return;
       }
       if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
         toast.error("Введите корректный бюджет");
+        setLoading(false);
         return;
       }
-      if (!addCategory) {
+      if (!categoryId) {
         toast.error("Выберите категорию проекта");
+        setLoading(false);
         return;
       }
 
-      const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${user}`);
+      // Получаем текущего пользователя по ID
+      const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user/${userId}`);
       const currentUser = res.data;
 
       const newOrder = {
-        category: addCategory,
+        categoryId: Number(categoryId), // Передаем id категории, а не имя
         ordersId: String(Date.now()),
         skills,
         description,
-        projectDetails: projectdetails,
+        projectDetails: projectDuration,
         startDate: new Date().toISOString(),
         amount: Number(amount),
       };
 
+      // Обновляем массив заказов
       const updatedOrders = [...(currentUser.orders || []), newOrder];
 
-      await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${user}`, {
+      // Отправляем PATCH запрос с обновленными заказами
+      await axios.patch(`https://43baa55b08d805d5.mokky.dev/user/${userId}`, {
         orders: updatedOrders,
       });
 
       toast.success('Ваш заказ опубликован.');
-      setTimeout(() => {
-        rout.push("/create-order");
-      }, 1000);
 
+      // Очистка полей
       setSkills("");
       setDescription("");
-      setProjectdetails("");
+      setProjectDuration("");
       setAmount("");
+      setCategoryId("");
+
+      // Переадресация через секунду
+      setTimeout(() => {
+        router.push("/create-order");
+      }, 1000);
+
     } catch (error) {
       console.error("Ошибка при добавлении заказа:", error);
       toast.error("Произошла ошибка при добавлении заказа");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -134,7 +153,7 @@ const AddOrders = () => {
             <label className='block text-sm font-medium text-gray-700 mb-2'>
               Категория проекта
             </label>
-            <Select onValueChange={(value) => setaddCategory(value)}> {/* ✅ Ислоҳ: якта Select истифода бурда шуд */}
+            <Select onValueChange={(value) => setCategoryId(value)} value={categoryId}>
               <SelectTrigger className="w-full h-12 border-gray-300 hover:border-purple-400 focus:ring-2 focus:ring-purple-500">
                 <SelectValue placeholder="Выберите категорию" />
               </SelectTrigger>
@@ -142,7 +161,7 @@ const AddOrders = () => {
                 {categories.map((category) => (
                   <SelectItem
                     key={category.id}
-                    value={category.name}
+                    value={String(category.id)}
                     className="hover:bg-purple-50"
                   >
                     <div className="flex items-center gap-3">
@@ -172,8 +191,8 @@ const AddOrders = () => {
               <label className='block text-sm font-medium text-gray-700 mb-2'>Сроки (дни)</label>
               <Input
                 type="number"
-                value={projectdetails}
-                onChange={(e) => setProjectdetails(e.target.value)}
+                value={projectDuration}
+                onChange={(e) => setProjectDuration(e.target.value)}
                 placeholder="напр. 7"
                 className="h-12 border-gray-300 hover:border-purple-400 focus:ring-2 focus:ring-purple-500"
               />
@@ -205,15 +224,22 @@ const AddOrders = () => {
           {/* Кнопка публикации */}
           <button
             onClick={addOrders}
-            className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg"
+            disabled={loading}
+            className="mt-6 w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg"
           >
-            Опубликовать проект
+            {loading ? "Публикую..." : "Опубликовать проект"}
           </button>
         </div>
 
         {/* Иллюстрация */}
         <div className='w-[47%]'>
-          <Image className='w-[100%]' src="https://www.clipartmax.com/png/full/140-1402810_hire-freelancer-find-freelance-jobs-office-365.png" alt='Photo' width={300} height={400} />
+          <Image
+            className='w-[100%]'
+            src="https://www.clipartmax.com/png/full/140-1402810_hire-freelancer-find-freelance-jobs-office-365.png"
+            alt='Photo'
+            width={300}
+            height={400}
+          />
         </div>
       </div>
     </ProtectedRoute>
