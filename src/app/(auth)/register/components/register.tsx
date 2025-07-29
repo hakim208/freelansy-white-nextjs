@@ -1,279 +1,275 @@
 "use client"
-import React from 'react';
-import styled from 'styled-components';
-import { useRouter } from 'next/navigation';
-import { Toaster } from 'react-hot-toast'
-import toast from 'react-hot-toast'
-import { emailAtom, firstNameAtom, passwordAtom, surNameAtom } from '@/store/registerSlice';
-import axios from 'axios';
-import { useAtom } from 'jotai';
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
+import { emailAtom, firstNameAtom, passwordAtom, surNameAtom } from "@/store/registerSlice"
+import axios from "axios"
+import { useAtom } from "jotai"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Eye, EyeOff, ArrowLeft, User, Mail, Lock } from "lucide-react"
+import Link from "next/link"
 
 interface FormProps {
-    roleUser: string;
+  roleUser: string;
 }
 
 const Form: React.FC<FormProps> = ({ roleUser }) => {
+  const [email, setEmail] = useAtom(emailAtom);
+  const [password, setpassword] = useAtom(passwordAtom)
+  const [name, setName] = useAtom(firstNameAtom)
+  const [surname, setSurname] = useAtom(surNameAtom)
 
-    const [email, setEmail] = useAtom(emailAtom);
-    const [password, setpassword] = useAtom(passwordAtom)
-    const [name, setname] = useAtom(firstNameAtom)
-    const [surname, setsurname] = useAtom(surNameAtom)
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-    const router = useRouter()
+  const router = useRouter()
 
-    const goToAbout = () => {
-        router.push('/login');
-    };
+  const goToAbout = () => {
+    router.push('/login');
+  };
 
-    const registerUser = async () => {
-        if (name.length > 0 && password.length > 3 && surname.length > 0 && email.length > 0) {
-            try {
-                const newUser = {
-                    name,
-                    surname,
-                    email,
-                    password,
-                    roleUser,
-                    createdAt: new Date().toISOString(),
-                    orders:[]
-                }
-
-                await axios.post("https://43baa55b08d805d5.mokky.dev/user", newUser)
-                goToAbout()
-                toast.success('Регистрация прошла успешно!')
-            } catch (error) {
-                toast.error('Такой пользователь уже существует!')
-                console.error(error);
-            }
-        }
-        else {
-            toast.error('Пополните карточк!')
-        }
+  const registerUser = async () => {
+    if (!name || !surname || !email || !password || !confirmPassword) {
+      toast.error('Заполните все поля!');
+      return;
     }
 
-    return (
-        <StyledWrapper>
-            <Toaster/>
-            <div className='form'>
-                <p className="title">Register </p>
-                <p className="message">Signup now and get full access to our app.</p>
+    if (password.length < 4) {
+      toast.error("Пароль должен быть минимум 4 символа");
+      return;
+    }
 
-                <div className="flex">
-                    <label htmlFor="firstname">
-                        <input
-                            value={name}
-                            onChange={(e) => setname(e.target.value)}
-                            id="firstname"
-                            name="firstname"
-                            required
-                            placeholder=" "
-                            type="text"
-                            className="input"
-                        />
-                        <span>Firstname</span>
-                    </label>
+    if (password !== confirmPassword) {
+      toast.error("Пароли не совпадают!");
+      return;
+    }
 
-                    <label htmlFor="lastname">
-                        <input
-                            value={surname}
-                            onChange={(e) => setsurname(e.target.value)}
-                            id="lastname"
-                            name="lastname"
-                            required
-                            placeholder=" "
-                            type="text"
-                            className="input"
-                        />
-                        <span>Lastname</span>
-                    </label>
+    try {
+      setIsLoading(true)
+
+      const newUser = {
+        name,
+        surname,
+        email,
+        password,
+        roleUser,
+        createdAt: new Date().toISOString(),
+        orders: []
+      }
+
+      await axios.post("https://43baa55b08d805d5.mokky.dev/user", newUser)
+      toast.success('Регистрация прошла успешно!')
+      goToAbout()
+    } catch (error) {
+      toast.error('Такой пользователь уже существует!')
+      console.error(error);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div>
+      <Toaster />
+      <div className="w-full bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center p-4">
+        <Toaster position="top-center" />
+
+        <div className="w-full max-w-md">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 p-0"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Назад</span>
+            </Button>
+          </div>
+
+          {/* Registration Card */}
+          <Card className="w-full shadow-xl border-0">
+            <CardHeader className="text-center pb-6">
+              <div
+                className={`md:w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${roleUser === "freelancer" ? "bg-blue-100" : "bg-purple-100"
+                  }`}
+              >
+                <User className={`w-8 h-8 ${roleUser === "freelancer" ? "text-blue-600" : "text-purple-600"}`} />
+              </div>
+              <CardTitle className="text-2xl font-bold text-gray-900">{roleUser}</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstname" className="text-sm font-medium text-gray-700">
+                    Имя
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      id="firstname"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Введите ваше имя"
+                      className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
                 </div>
 
-                <label htmlFor="email">
-                    <input
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        id="email"
-                        name="email"
-                        required
-                        placeholder=" "
-                        type="email"
-                        className="input"
+                <div className="space-y-2">
+                  <Label htmlFor="lastname" className="text-sm font-medium text-gray-700">
+                    Фамилия
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      id="lastname"
+                      type="text"
+                      value={surname}
+                      onChange={(e) => setSurname(e.target.value)}
+                      placeholder="Введите вашу фамилию"
+                      className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      required
                     />
-                    <span>Email</span>
-                </label>
+                  </div>
+                </div>
+              </div>
 
-                <label htmlFor="password">
-                    <input
-                        value={password}
-                        onChange={(e) => setpassword(e.target.value)}
-                        id="password"
-                        name="password"
-                        required
-                        placeholder=" "
-                        type="password"
-                        className="input"
-                    />
-                    <span>Password</span>
-                </label>
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="example@email.com"
+                    className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </div>
 
-                <label htmlFor="confirmPassword">
-                    <input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        required
-                        placeholder=" "
-                        type="password"
-                        className="input"
-                    />
-                    <span>Confirm password</span>
-                </label>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                  Пароль
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setpassword(e.target.value)}
+                    placeholder="Минимум 4 символа"
+                    className="pl-10 pr-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
 
-                <button className="submit" onClick={registerUser} >Submit</button>
-                <p className="signin">
-                    Already have an account? <a href="/login">Signin</a>
+              {/* Confirm Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                  Подтвердите пароль
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Повторите пароль"
+                    className="pl-10 pr-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                onClick={registerUser}
+                disabled={isLoading}
+                className={`w-full h-12 text-lg font-semibold transition-all duration-300 ${roleUser === "freelancer"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                  : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+                  } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Регистрация...</span>
+                  </div>
+                ) : (
+                  "Зарегистрироваться"
+                )}
+              </Button>
+
+              {/* Login Link */}
+              <div className="text-center pt-4">
+                <p className="text-gray-600">
+                  Уже есть аккаунт?{" "}
+                  <Link
+                    href="/login"
+                    className={`font-semibold hover:underline ${roleUser === "freelancer" ? "text-blue-600" : "text-purple-600"
+                      }`}
+                  >
+                    Войти
+                  </Link>
                 </p>
-            </div>
-        </StyledWrapper>
-    );
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Footer */}
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-500">
+              Регистрируясь, вы соглашаетесь с{" "}
+              <Link href="#" className="text-blue-600 hover:underline">
+                условиями использования
+              </Link>{" "}
+              и{" "}
+              <Link href="#" className="text-blue-600 hover:underline">
+                политикой конфиденциальности
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const StyledWrapper = styled.div`
-  /* Ваш CSS из предыдущего примера */
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 350px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 20px;
-    position: relative;
-  }
 
-  .title {
-    font-size: 28px;
-    color: royalblue;
-    font-weight: 600;
-    letter-spacing: -1px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 30px;
-  }
-
-  .title::before,
-  .title::after {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    left: 0px;
-    background-color: royalblue;
-  }
-
-  .title::before {
-    width: 18px;
-    height: 18px;
-    background-color: royalblue;
-  }
-
-  .title::after {
-    width: 18px;
-    height: 18px;
-    animation: pulse 1s linear infinite;
-  }
-
-  .message,
-  .signin {
-    color: rgba(88, 87, 87, 0.822);
-    font-size: 14px;
-  }
-
-  .signin {
-    text-align: center;
-  }
-
-  .signin a {
-    color: royalblue;
-  }
-
-  .signin a:hover {
-    text-decoration: underline royalblue;
-  }
-
-  .flex {
-    display: flex;
-    width: 100%;
-    gap: 6px;
-  }
-
-  .form label {
-    position: relative;
-    flex: 1;
-  }
-
-  .form label .input {
-    width: 100%;
-    padding: 10px 10px 20px 10px;
-    outline: 0;
-    border: 1px solid rgba(105, 105, 105, 0.397);
-    border-radius: 10px;
-  }
-
-  .form label .input + span {
-    position: absolute;
-    left: 10px;
-    top: 15px;
-    color: grey;
-    font-size: 0.9em;
-    cursor: text;
-    transition: 0.3s ease;
-  }
-
-  .form label .input:placeholder-shown + span {
-    top: 15px;
-    font-size: 0.9em;
-  }
-
-  .form label .input:focus + span,
-  .form label .input:valid + span {
-    top: 30px;
-    font-size: 0.7em;
-    font-weight: 600;
-  }
-
-  .form label .input:valid + span {
-    color: green;
-  }
-
-  .submit {
-    border: none;
-    outline: none;
-    background-color: royalblue;
-    padding: 10px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 16px;
-    transition: 0.3s ease;
-    cursor: pointer;
-  }
-
-  .submit:hover {
-    background-color: rgb(56, 90, 194);
-  }
-
-  @keyframes pulse {
-    from {
-      transform: scale(0.9);
-      opacity: 1;
-    }
-
-    to {
-      transform: scale(1.8);
-      opacity: 0;
-    }
-  }
-`;
 
 export default Form;

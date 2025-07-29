@@ -136,8 +136,8 @@ const AddOrders = () => {
   return (
     <ProtectedRoute>
       <Toaster />
-      <div className='pt-[100px] w-[80%] m-auto flex items-center justify-between '>
-        <div className='w-[47%] h-[80vh] flex flex-col p-6 border border-gray-200 rounded-xl bg-gradient-to-br from-white to-gray-50 shadow-lg overflow-y-auto'>
+      <div className='pt-[100px] pb-[50px] w-[90%] md:w-[80%] m-auto flex md:flex-row flex-col items-center justify-between '>
+        <div className='md:w-[47%] h-[80vh] flex flex-col p-6 border border-gray-200 rounded-xl bg-gradient-to-br from-white to-gray-50 shadow-lg overflow-y-auto'>
           <div className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-800 flex items-center gap-2'>
               <svg strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-purple-600">
@@ -230,11 +230,9 @@ const AddOrders = () => {
             {loading ? "Публикую..." : "Опубликовать проект"}
           </button>
         </div>
-
-        {/* Иллюстрация */}
         <div className='w-[47%]'>
           <Image
-            className='w-[100%]'
+            className='md:block hidden w-[100%]'
             src="https://www.clipartmax.com/png/full/140-1402810_hire-freelancer-find-freelance-jobs-office-365.png"
             alt='Photo'
             width={300}

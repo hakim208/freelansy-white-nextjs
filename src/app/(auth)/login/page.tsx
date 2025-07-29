@@ -16,6 +16,7 @@ import { addFirstNameAtom, addPasswordAtom } from '@/store/registerSlice';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
+import { ArrowLeft } from 'lucide-react';
 
 const Login = () => {
   const [name, setName] = useAtom(addFirstNameAtom);
@@ -58,62 +59,93 @@ const Login = () => {
     <ProtectedRoute>
       <LayoutWrapper>
         <Toaster />
-        <div className='flex items-start md:flex-row flex-col '>
-          <div className='flex flex-col items-center gap-[30px] h-[100vh] bg-blue-400 p-[50px_0px] md:w-[50%] w-full '>
-            <h1 className='text-[35px] font-bold text-white'>Freelansy</h1>
-            <Image src={ImgLogin} width={500} height={500} alt='photo' />
-            <h1 className='text-[20px] text-white font-medium'>У вас нет учетной записи?</h1>
-            <Link href="/register">
-              <InteractiveHoverButton className='w-[350px]'>Sign Up</InteractiveHoverButton>
+        <div className='flex flex-col md:flex-row items-start min-h-screen'>
+          {/* Left Side - Image Section */}
+          <div className=' md:flex hidden flex-col items-center gap-6 md:gap-[30px] bg-blue-400 p-8 md:p-12 md:w-[50%] w-full md:h-[100vh] order-2 md:order-1'>
+            <h1 className='text-2xl md:text-[35px] font-bold text-white'>Freelansy</h1>
+            <div className='w-full max-w-[300px] md:max-w-[500px]'>
+              <Image
+                src={ImgLogin}
+                width={500}
+                height={500}
+                alt='login illustration'
+                className='w-full h-auto'
+              />
+            </div>
+            <h1 className='text-base md:text-[20px] text-white font-medium text-center'>У вас нет учетной записи?</h1>
+            <Link href="/register" className='w-full max-w-[350px]'>
+              <InteractiveHoverButton className='w-full'>Sign Up</InteractiveHoverButton>
             </Link>
           </div>
-          <div className='md:w-[50%] w-full p-[50px_0px]'>
-            <div className='md:w-[70%] w-full m-auto flex flex-col items-start gap-[40px]'>
-              <div className='flex items-center gap-[10px]'>
-                <h1 className='text-[20px] font-medium'>С возвращением домой</h1>
-                <Image src={Imgcongrats} width={30} height={30} alt='photo' />
+
+          {/* Right Side - Form Section */}
+          <div className='md:w-[50%] w-full p-6 md:p-12 order-1 md:order-2'>
+            <div className='max-w-[500px] md:w-[70%] mx-auto flex flex-col gap-6 md:gap-[40px]'>
+              <div className='flex flex-col gap-4'>
+                <div className='flex items-center gap-3'>
+                  <h1 className='text-xl md:text-[20px] font-medium'>С возвращением домой</h1>
+                  <Image src={Imgcongrats} width={24} height={24} alt='welcome icon' className=' w-6 h-6 md:w-8 md:h-8' />
+                </div>
+                <Link href="/">
+                  <h1 className='text-base md:text-[20px] text-blue-400 font-medium flex items-center gap-1'>
+                    <ArrowLeft className='w-4 h-4' /> Главная
+                  </h1>
+                </Link>
               </div>
-              <Link href="/">
-                <h1 className='text-[20px] text-blue-400 font-medium'>←Главная</h1>
-              </Link>
-              <div className='w-full mt-[20px]'>
-                <Card className="w-full md:w-[80%] shadow-lg">
+
+              <div className='w-full mt-4 md:mt-[20px]'>
+                <Card className="w-full shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-center text-xl">Войти в аккаунт</CardTitle>
+                    <CardTitle className="text-center text-lg md:text-xl">Войти в аккаунт</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className='p-4 md:p-6'>
                     <form className="space-y-4" onSubmit={loginUser}>
-                      <div className='flex flex-col items-start gap-[10px]'>
+                      <div className='flex flex-col gap-2'>
                         <Label htmlFor="name">Имя</Label>
                         <Input
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           id="name"
                           type="text"
-                          className='p-[25px_7px]'
+                          className='p-3 md:p-4'
                           placeholder="Имя пользователя"
                         />
                       </div>
-                      <div className='flex flex-col items-start gap-[10px]'>
+                      <div className='flex flex-col gap-2'>
                         <Label htmlFor="password">Пароль</Label>
                         <Input
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           id="password"
-                          className='p-[25px_7px]'
+                          className='p-3 md:p-4'
                           placeholder='Пароль пользователя'
                           type="password"
                         />
                       </div>
-                      <div>
-                        <Link href="/register">
-                          <p className='text-red-500 text-[15px]'>Забыли пароль?</p>
+                      <div className='text-right'>
+                        <Link href="/forgot-password">
+                          <p className='text-sm text-red-500 hover:underline'>Забыли пароль?</p>
                         </Link>
                       </div>
-                      <Button type="submit" variant="destructive" className="w-full">
+                      <Button
+                        variant={"destructive"}
+                        type="submit"
+                        className="w-full "
+                      >
                         Войти
                       </Button>
                     </form>
+                    <div className="md:hidden block text-center pt-4">
+                      <p className="text-gray-600">
+                        Нет аккаунта?{" "}
+                        <Link
+                          href="/register"
+                          className={`font-semibold hover:underline}`}
+                        >
+                          Регистрация.
+                        </Link>
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

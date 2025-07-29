@@ -2,6 +2,9 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    turbo: false,  // отключаем turbopack и используем Webpack
+  },
   images: {
     domains: [
       '43baa55b08d805d5.mokky.dev',

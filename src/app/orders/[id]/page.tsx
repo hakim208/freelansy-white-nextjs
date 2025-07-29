@@ -1,21 +1,12 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog"
 import toast, { Toaster } from "react-hot-toast"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 
 interface Order {
   ordersId: string
@@ -37,9 +28,16 @@ interface User {
 const OrderById: React.FC = () => {
   const params = useParams() as { id: string }
   const { id } = params
+
   const [data, setData] = useState<User[]>([])
-  const orderId = typeof window !== "undefined" ? localStorage.getItem("ordersId") : null
-  const roleUser = typeof window !== "undefined" ? localStorage.getItem("roleUser") : null
+  const [orderId, setOrderId] = useState<string | null>(null)
+  const [roleUser, setRoleUser] = useState<string | null>(null)
+
+  useEffect(() => {
+    setOrderId(localStorage.getItem("ordersId"))
+    setRoleUser(localStorage.getItem("roleUser"))
+  }, [])
+    
 
   const userIdFun = data.find((e) => e.id === id)
   const ordersIdFun = userIdFun?.orders.find((e) => e.ordersId === orderId)
@@ -53,7 +51,7 @@ const OrderById: React.FC = () => {
       return
     }
     try {
-      const user = typeof window !== "undefined" ? localStorage.getItem("acssec_token") : null
+      const user = localStorage.getItem("acssec_token")
       if (!user) {
         toast.error("Пользователь не авторизован")
         return
@@ -104,7 +102,7 @@ const OrderById: React.FC = () => {
       }
     }
     fetchData()
-  }, [id, data, setData])
+  }, [id,data])
 
   if (!orderId) {
     return <div className="text-center mt-10">Заказ не найден (ordersId отсутствует)</div>

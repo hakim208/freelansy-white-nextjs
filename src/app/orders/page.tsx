@@ -6,6 +6,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { Button } from '@/lib/ui/button'
 import { useRouter } from 'next/navigation'
+import { Calendar, Search, Star, TrendingUp } from 'lucide-react'
 
 interface Order {
   ordersId: string
@@ -26,7 +27,6 @@ interface User {
 }
 
 const Orders: React.FC = () => {
-  // Правильно типизируем — массив пользователей
   const [data, setData] = useState<User[]>([])
   const [search, setSearch] = useState<string>("")
   const router = useRouter()
@@ -53,7 +53,7 @@ const Orders: React.FC = () => {
       field.toLowerCase().includes(search.toLowerCase())
     )
   )
-
+ 
   const onOrderClick = (userId: number, ordersId: string) => {
     localStorage.setItem("ordersId", ordersId)
     router.push(`/orders/${userId}`)
@@ -66,116 +66,197 @@ const Orders: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className='pt-[100px] w-[80%] m-auto'>
-        <div className='flex w-full items-center justify-between'>
-          <div className='w-[56%]'>
-            <div className="w-full relative flex items-center bg-purple-50 hover:bg-purple-100 p-[8px_20px] border border-purple-200 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-300 hover:scale-105 active:scale-95">
-              <input
-                type="text"
-                placeholder="Поиск..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="outline-0 border-0 w-full bg-transparent"
-              />
-              <button className="p-[5px_20px] bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="size-6" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
+      <div className='pt-[60px] md:pt-[80px] w-full m-auto pb-[60px] '>
+        <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 py-6 md:py-8">
+          <div className="w-full md:w-[80%] mx-auto px-2 md:px-0">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">Категории заказов</h1>
+            <p className="text-sm md:text-base text-purple-100">Найдите идеальный проект для себя</p>
           </div>
         </div>
 
-        <div className='flex w-full items-center justify-between p-[20px_0px] '>
-          <h1 className='text-[23px] font-medium text-gray-900 hover:text-purple-400 cursor-pointer transition duration-200'>Все заказы</h1>
-          <h1 className='text-[23px] w-[20%] font-medium text-gray-900 hover:text-purple-400 cursor-pointer transition duration-200'>Топ фрилансеры</h1>
-        </div>
+        <div className='w-full md:w-[80%] m-auto px-2 md:px-0'>
+          <div className='flex flex-col md:flex-row w-full items-center justify-between'>
+            <div className="w-full md:w-[56%] mt-4 md:mt-[30px] mb-3 md:mb-[20px]">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative flex flex-col justify-between md:flex-row items-center bg-white/80 backdrop-blur-sm hover:bg-white p-3 md:p-4 border border-purple-200/50 rounded-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-purple-300 hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                  <div className="flex w-full md:w-auto items-center mb-2 md:mb-0">
+                    <Search className="w-5 h-5 text-purple-400 mr-3" />
+                    <input
+                      type="text"
+                      placeholder="Поиск проектов..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="outline-0 border-0 w-full bg-transparent text-gray-700 placeholder-gray-400 text-base md:text-lg"
+                    />
+                  </div>
+                  <button
+                    className="ml-0 md:ml-4 w-full md:w-auto px-4 md:px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg font-medium text-sm md:text-base"
+                    onClick={() => { }}
+                  >
+                    Найти
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div className='flex items-start justify-between'>
-          <div className='w-[78%]'>
-            <div className="flex flex-wrap justify-between gap-4">
-              {filteredOrders.length === 0 && (
-                <p className="w-full text-center text-gray-500">Ничего не найдено</p>
-              )}
-              {
-                clientOrders.map(({ userId, name, surname, img, order }, index) => (
+          <div className="flex items-center gap-3 group cursor-pointer mt-4 md:mt-0">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-white" />
+            </div>
+            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-purple-600 bg-clip-text text-transparent hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
+              Все заказы
+            </h1>
+          </div>
+
+          <div className='flex flex-col md:flex-row items-start justify-between'>
+            <div className="w-full md:w-[78%] mt-4 md:mt-[30px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {filteredOrders.length === 0 && (
+                  <div className="col-span-full flex flex-col items-center justify-center py-8 md:py-12">
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 md:mb-4">
+                      <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500 text-base md:text-lg font-medium">Ничего не найдено</p>
+                    <p className="text-gray-400 text-xs md:text-sm mt-1">Попробуйте изменить параметры поиска</p>
+                  </div>
+                )}
+
+                {clientOrders.map(({ userId, name, surname, img, order }, index) => (
                   <div
                     key={`${userId}-${index}`}
                     onClick={() => onOrderClick(userId, order.ordersId)}
-                    className="p-4 hover:scale-105 transition-transform duration-200 cursor-pointer border w-[31%] flex flex-col gap-[15px] rounded-lg bg-white"
+                    className="group relative bg-white rounded-xl md:rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1"
                   >
-                    <div className='flex items-start w-full justify-between '>
-                      <Image
-                        src={img && img.trim() !== "" ? img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                        alt="avatar"
-                        className="rounded-full w-[30px] h-[30px] mb-2"
-                        width={30}
-                        height={30}
-                      />
-                      <div className='flex items-center gap-[5px] '>
-                        <div className='text-[12px] flex items-center gap-[10px] font-medium '>
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 text-purple-800 ">
-                            <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
-                            <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clipRule="evenodd" />
-                          </svg>
-                          {new Date(order.startDate).toLocaleDateString("ru-RU", {
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric"
-                          })}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    <div className="relative p-4 md:p-6">
+                      <div className="flex items-start justify-between mb-3 md:mb-4">
+                        <div className="relative">
+                          <Image
+                            src={
+                              img && img.trim() !== ""
+                                ? img
+                                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"
+                            }
+                            alt="avatar"
+                            className="rounded-full w-10 h-10 md:w-12 md:h-12 border-2 border-white shadow-md"
+                            width={48}
+                            height={48}
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2 bg-purple-50 px-2 py-1 md:px-3 md:py-1.5 rounded-full">
+                          <Calendar className="w-3 h-3 md:w-4 md:h-4 text-purple-600" />
+                          <span className="text-xs text-purple-700">
+                            {new Date(order.startDate).toLocaleDateString("ru-RU", {
+                              day: "2-digit",
+                              month: "short",
+                            })}
+                          </span>
                         </div>
                       </div>
+
+                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-purple-700 transition-colors">
+                        {name} {surname}
+                      </h3>
+
+                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg md:rounded-xl p-3 md:p-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[70px] flex items-center">
+                        <p className="text-xs md:text-sm text-gray-700 font-medium line-clamp-2 leading-relaxed">{order.skills}</p>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-3 md:mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl md:text-2xl font-bold text-gray-900">{order.amount}</span>
+                          <span className="text-xs md:text-sm font-medium text-gray-500">TJS</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs md:text-sm font-medium text-gray-600">4.8</span>
+                        </div>
+                      </div>
+
+                      <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 md:py-2.5 rounded-lg md:rounded-xl transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base">
+                        Подробнее
+                      </Button>
                     </div>
-                    <p className="text-[15px] font-bold text-purple-800">{name} {surname}</p>
-                    <div className='bg-purple-50 h-[50px] p-2 rounded-lg mb-2 overflow-hidden'>
-                      <p className="text-sm text-gray-700 mb-1 font-medium truncate">
-                        {order.skills}
-                      </p>
-                    </div>
-                    <div className='flex items-center gap-[10px] '>
-                      <p className='font-bold'>{order.amount} TJS</p>
-                    </div>
-                    <Button variant="destructive">Подробнее</Button>
+
+                    <div className="absolute top-0 right-0 w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-purple-100 to-transparent rounded-bl-full opacity-50" />
+                    <div className="absolute bottom-0 left-0 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-tr from-blue-100 to-transparent rounded-tr-full opacity-50" />
                   </div>
-                )
-                )
-              }
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className='w-[20%] flex flex-col gap-[5px] '>
-            {data.filter(u => u.roleUser === "freelancer").slice(0, 6).map(e => (
-              <div
-                key={e.id}
-                className="flex items-center gap-5 p-1 bg-gray-100 rounded-xl hover:scale-110 transition-transform duration-200 cursor-pointer"
-              >
-                <Image
-                  src={e.img && e.img.trim() !== "" ? e.img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                  className="rounded-full"
-                  width={40}
-                  height={40}
-                  alt="photo"
-                />
-                <p className="text-base font-bold">{e.name}</p>
+            <div className="w-full md:w-[20%] mt-6 md:mt-0 space-y-6">
+              {/* Top Freelancers */}
+              <div>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Топ фрилансеры</h2>
+                <div className="space-y-3">
+                  {data
+                    .filter((u) => u.roleUser === "freelancer")
+                    .slice(0, 6)
+                    .map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors duration-300 cursor-pointer"
+                      >
+                        <Image
+                          src={e.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
+                          className="rounded-full w-9 h-9 md:w-10 md:h-10 border-2 border-white"
+                          width={40}
+                          height={40}
+                          alt="photo"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm md:text-base font-medium text-gray-800 truncate">{e.name}</p>
+                          <div className="flex items-center gap-1 mt-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
-            ))}
 
-            <p className='text-[20px] font-bold text-gray-900 mt-6 mb-2'>Топ заказчики</p>
-            {data.filter(u => u.roleUser === "client").slice(0, 6).map(e => (
-              <div
-                key={e.id}
-                className="flex items-center gap-5 p-1 bg-gray-100 rounded-xl hover:scale-110 transition-transform duration-200 cursor-pointer"
-              >
-                <Image
-                  src={e.img && e.img.trim() !== "" ? e.img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
-                  className="rounded-full"
-                  width={40}
-                  height={40}
-                  alt="photo"
-                />
-                <p className="text-base font-bold">{e.name}</p>
+              {/* Top Clients */}
+              <div>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Топ заказчики</h2>
+                <div className="space-y-3">
+                  {data
+                    .filter((u) => u.roleUser === "client")
+                    .slice(0, 6)
+                    .map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors duration-300 cursor-pointer"
+                      >
+                        <Image
+                          src={e.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPFaXtvRYynJHeIfyEKbSr7YCZI3ycZ_0MlA&s"}
+                          className="rounded-full w-9 h-9 md:w-10 md:h-10 border-2 border-white"
+                          width={40}
+                          height={40}
+                          alt="photo"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm md:text-base font-medium text-gray-800 truncate">{e.name}</p>
+                          <p className="text-xs text-gray-500 mt-1">Активный заказчик</p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
