@@ -34,7 +34,7 @@ const Home = () => {
             </BoxReveal>
 
             <BoxReveal boxColor="#5046e6" duration={0.7}>
-              <div className="mt-6 md:mt-10 flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
+              <div className="md:flex hidden mt-6 md:mt-10 flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
                 <Link href="/login">
                   <Button className="bg-gradient-to-r from-[#5046e6] to-[#7c3aed] text-white text-sm md:text-base lg:text-lg px-6 py-3 md:px-8 md:py-4 rounded-lg md:rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 transform w-full sm:w-auto">
                     Войти
@@ -53,7 +53,7 @@ const Home = () => {
           </div>
 
           {/* Image/Swiper Section */}
-          <div className='w-full lg:w-[50%] relative mt-8 md:mt-0'>
+          <div className='w-full lg:w-[50%] relative mt-4 md:mt-0'>
             <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-[#5046e6]/20 to-[#7c3aed]/20 rounded-xl md:rounded-3xl blur-md md:blur-lg opacity-75 animate-float"></div>
             <div className="relative rounded-lg md:rounded-2xl overflow-hidden shadow-lg md:shadow-2xl border border-[#5046e6]/10">
               <MySwiper />

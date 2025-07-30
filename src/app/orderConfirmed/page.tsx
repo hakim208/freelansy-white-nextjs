@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import LoginOrdersCompanents from "../components/loginOrdersCompanents";
 
 type Order = {
   ordersId: string;
@@ -22,47 +23,39 @@ type User = {
 
 const OrderConfirmed = () => {
   const [data, setData] = useState<User[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const userId = typeof window !== "undefined" ? localStorage.getItem("acssec_token") : null
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        setUserId(storedUserId);
-      }
+  async function getUsers() {
+    try {
+      setLoading(true);
+      const res = await axios.get<User[]>(
+        "https://43baa55b08d805d5.mokky.dev/user"
+      );
+      console.log(res);
+
+      setData(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLoading(false);
     }
-  }, []);
+
+  }
 
   useEffect(() => {
-    async function getUsers() {
-      try {
-        setLoading(true);
-        const res = await axios.get<User[]>(
-          "https://43baa55b08d805d5.mokky.dev/user"
-        );
-        setData(res.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    if (userId !== null) {
-      getUsers();
-    }
-  }, [userId]);
+    getUsers();
+  }, []);
 
   if (!userId) {
-    return <div>Загрузка...</div>;
+    return <LoginOrdersCompanents/>;
   }
 
   if (loading) {
-    return <div>Загрузка...</div>;
+    return <LoginOrdersCompanents/>
   }
 
-  const userOrders = data.find((e) => String(e.id) === userId);
+  const userOrders = data.find((e) => String(e.id) === String(userId));
 
   const confirmedOrders =
     userOrders?.orders?.filter((order) => order.confirmed && order.pending) ??

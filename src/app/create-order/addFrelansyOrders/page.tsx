@@ -17,7 +17,7 @@ const AddFrelansyOrders = () => {
                         <div className="flex items-center gap-2">
                             <span
                                 onClick={() => setActivePage(1)}
-                                className={`text-xl cursor-pointer transition-all ${activePage === 1 ? 'font-semibold text-purple-700' : 'text-gray-600'
+                                className={`text-[12px] md:text-xl cursor-pointer transition-all ${activePage === 1 ? 'font-semibold text-purple-700' : 'text-gray-600'
                                     }`}
                             >
                                 В разработке
@@ -31,7 +31,7 @@ const AddFrelansyOrders = () => {
                         <div className="flex items-center gap-2">
                             <span
                                 onClick={() => setActivePage(2)}
-                                className={`text-xl cursor-pointer transition-all ${activePage === 2 ? 'font-semibold text-purple-700' : 'text-gray-600'
+                                className={`text-[12px] md:text-xl cursor-pointer transition-all ${activePage === 2 ? 'font-semibold text-purple-700' : 'text-gray-600'
                                     }`}
                             >
                                 В проверке
@@ -45,7 +45,7 @@ const AddFrelansyOrders = () => {
                         <div className="flex items-center gap-2">
                             <span
                                 onClick={() => setActivePage(3)}
-                                className={`text-xl cursor-pointer transition-all ${activePage === 3 ? 'font-semibold text-purple-700' : 'text-gray-600'
+                                className={`text-[12px] md:text-xl cursor-pointer transition-all ${activePage === 3 ? 'font-semibold text-purple-700' : 'text-gray-600'
                                     }`}
                             >
                                 Выполнено

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import Image from 'next/image'
 import Logo from "../../app/images/Снимок экрана 2025-07-06 в 00.44.27.png";
-import { BriefcaseIcon, UserIcon, Home, Grid, Info, Mail, User, LogIn } from 'lucide-react'
+import { BriefcaseIcon, UserIcon, Home, Grid, Info, Mail, User } from 'lucide-react'
 
 const Header = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -32,7 +32,6 @@ const Header = () => {
     { href: "/", icon: <Home className="w-5 h-5" />, label: "Главная" },
     { href: "/category", icon: <Grid className="w-5 h-5" />, label: "Категории" },
     { href: "/about", icon: <Info className="w-5 h-5" />, label: "О нас" },
-    { href: "/login", icon: <LogIn className="w-5 h-5" />, label: "Вход" },
   ];
 
   return (
@@ -40,7 +39,6 @@ const Header = () => {
       <div>
         {!userId ? (
           <>
-            {/* Desktop Header */}
             <div className='hidden md:flex w-[90%] md:w-[80%] mx-auto items-center justify-between py-2'>
               <Link href="/" className='flex items-center'>
                 <Image src={Logo} width={150} height={30} alt='logo' priority />
@@ -64,18 +62,21 @@ const Header = () => {
               </div>
             </div>
 
-            {/* Mobile Header */}
             <div className='md:hidden flex items-center justify-between w-[90%] m-auto '>
               <Link href="/">
                 <Image src={Logo} width={120} height={24} alt='logo' priority />
               </Link>
+              <Link href="/login">
+                <PulsatingButton bgColor="#7c3aed" pulseColor="#7c3aed" duration="2s">
+                  Войти
+                </PulsatingButton>
+              </Link>
             </div>
 
-            {/* Mobile Bottom Navigation */}
             <div className='md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-30'>
               <div className='flex justify-around items-center h-16'>
                 {mobileNavItems.map((item) => (
-                  <MobileBottomLink 
+                  <MobileBottomLink
                     key={item.href}
                     href={item.href}
                     icon={item.icon}
@@ -87,36 +88,37 @@ const Header = () => {
             </div>
           </>
         ) : (
-          <div className='w-[90%] md:w-[80%] mx-auto flex items-center justify-between'>
-            <Link href={roleUser === "client" ? "/orders" : "/freelancer-dashboard"}>
-              <Image src={Logo} width={150} height={30} alt='logo' priority />
+          <div className='w-[95%] md:w-[80%] mx-auto flex items-center justify-between'>
+            <Link href={"/orders"}>
+              <Image src={Logo} width={100} height={30} alt='logo' priority />
             </Link>
-            
+
             <div className='flex items-center gap-3'>
-                <Link href="/create-order">
-                  <Button variant="outline" size="sm">
-                    Создать заказ
-                  </Button>
-                </Link>
-              
-              <Link href="/messages" className="p-2 text-gray-600 hover:text-purple-600">
+              <Link href="/create-order">
+                <Button variant="destructive" className='text-[10px] md:text-[15px] '>
+                  {
+                    roleUser == "client" ? (<span>Создать заказ</span>):(<span>Мои заказы</span>)
+                  }
+                </Button>
+              </Link>
+
+              <Link href="/messages" className="p-2 rounded-[50%] bg-gray-100 text-gray-600">
                 <Mail className="w-5 h-5" />
               </Link>
-              
+
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className="rounded-full w-9 h-9 p-0 bg-gray-100 hover:bg-gray-200">
+                  <Button variant="ghost" className="rounded-full w-9 h-9 p-0 bg-gray-100">
                     <User className="w-4 h-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2" align="end">
-                  <div className="space-y-2">
-                    <div className={`p-2 rounded-md ${
-                      roleUser === "client" 
-                        ? "bg-purple-50 text-purple-700" 
+                  <div className="space-y-2 flex flex-col gap-[2px] ">
+                    <div className={`p-2 rounded-md ${roleUser === "client"
+                        ? "bg-purple-50 text-purple-700"
                         : "bg-orange-50 text-orange-700"
-                    }`}>
-                      <div className="text-sm font-medium flex items-center gap-2">
+                      }`}>
+                      <div className="text-sm font-medium flex items-center gap-2 ">
                         {roleUser === "client" ? (
                           <>
                             <UserIcon className="h-4 w-4" />
@@ -130,17 +132,17 @@ const Header = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     <Link href="/profile">
                       <Button variant="outline" size="sm" className="w-full">
                         Профиль
                       </Button>
                     </Link>
-                    
-                    <Button 
-                      onClick={logout} 
-                      variant="destructive" 
-                      size="sm" 
+
+                    <Button
+                      onClick={logout}
+                      variant="destructive"
+                      size="sm"
                       className="w-full"
                     >
                       Выйти
@@ -156,24 +158,7 @@ const Header = () => {
   )
 }
 
-// Mobile Navigation Link Component
-// const MobileNavLink = ({ href, onClick, children }: { 
-//   href: string;
-//   onClick: () => void;
-//   children: React.ReactNode;
-// }) => (
-//   <Link href={href}>
-//     <div 
-//       onClick={onClick}
-//       className='flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-gray-100 text-gray-700 font-medium'
-//     >
-//       {children}
-//     </div>
-//   </Link>
-// );
-
-// Mobile Bottom Link Component
-const MobileBottomLink = ({ href, icon, children }: { 
+const MobileBottomLink = ({ href, icon, children }: {
   href: string;
   icon: React.ReactNode;
   children: string;

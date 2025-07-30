@@ -66,7 +66,7 @@ const Orders: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className='pt-[60px] md:pt-[80px] w-full m-auto pb-[60px] '>
+      <div className='pt-[60px] w-full m-auto pb-[60px] '>
         <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 py-6 md:py-8">
           <div className="w-full md:w-[80%] mx-auto px-2 md:px-0">
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">Категории заказов</h1>

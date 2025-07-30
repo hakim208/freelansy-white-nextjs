@@ -18,5 +18,3 @@ export const getOrdersAtom = atom([])
 
 export const urlClientAtom = atom("")
 export const descriptionClientAtom = atom("")
-
-export const tokenAtom = atom<string | null>(null);

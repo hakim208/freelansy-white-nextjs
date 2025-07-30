@@ -5,8 +5,6 @@ import { CheckCircleIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute';
-import { useAtom } from 'jotai';
-import { tokenAtom } from '@/store/registerSlice';
 
 interface AcceptedWork {
   clientId: string;
@@ -30,7 +28,7 @@ interface User {
 const CompletedOrder: React.FC = () => {
   const [order, setOrder] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [token] = useAtom(tokenAtom);
+  const token = typeof window !== "undefined" ? localStorage.getItem("acssec_token") : null
 
   useEffect(() => {
     if (!token) return;
@@ -122,11 +120,11 @@ const CompletedOrder: React.FC = () => {
     );
   }
 
-  const userOrders = order.find((e) => e.id === Number(token));
+  const userOrders = order.find((e) => Number(e.id) === Number(token));
 
   return (
     <ProtectedRoute>
-      <div className="pt-[100px] w-[80%] m-auto">
+      <div className="pt-[100px] w-[80%] pb-[50px] m-auto">
         <Toaster />
         <div className="w-[100%] flex flex-wrap gap-4">
           {(userOrders?.acceptedWork?.length ?? 0) > 0 ? userOrders?.acceptedWork?.map((e, i) => (

@@ -1,6 +1,7 @@
 "use client"
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react'
+import LoginOrdersCompanents from '../components/loginOrdersCompanents';
 
 type Order = {
     ordersId: string
@@ -44,9 +45,9 @@ const OrderPending = () => {
         getOrder();
     }, [getOrder]);
 
-    if (!token) return <div>Загрузка...</div>;
+    if (!token) return <LoginOrdersCompanents/>;;
 
-    const userOrders = data.find((e) => e.id === token);
+    const userOrders = data.find((e) => String(e.id) === String(token));
 
     return (
         <div className="space-y-4">

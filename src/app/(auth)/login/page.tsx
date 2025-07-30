@@ -38,6 +38,7 @@ const Login = () => {
           if (typeof window !== "undefined") {
             localStorage.setItem("acssec_token", res.data[0].id);
             localStorage.setItem("roleUser", res.data[0].roleUser);
+            localStorage.setItem("userId", res.data[0].userId);
           }
 
           setTimeout(() => {
