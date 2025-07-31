@@ -33,7 +33,7 @@ const CartCategory = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6 w-full px-4 max-w-6xl mx-auto">
+      <div className="flex flex-col gap-6 w-full">
         <div className="flex flex-wrap justify-center gap-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="w-full sm:w-[48%] md:w-[30%] h-48 bg-gray-200 rounded-xl animate-pulse" />
@@ -44,7 +44,7 @@ const CartCategory = () => {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full px-4 max-w-6xl mx-auto py-8">
+    <div className="flex flex-col gap-8 w-full px-4 max-w-[89%] mx-auto py-8">
       <div className="flex flex-wrap justify-center gap-6">
         {topCategories.map((item) => (
           <div 

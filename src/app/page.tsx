@@ -7,13 +7,14 @@ import MySwiper from './components/swiper'
 import CartCategory from './components/cartCategory'
 import { MarqueeDemo } from './components/reviewCard'
 import CtaBanner from './components/ctaBanner'
+import Section2 from './components/section2'
 
 const Home = () => {
   return (
     <ProtectedRoute>
-      <div className='pt-[60px] md:pt-[30px] w-full md:w-[90%] m-auto px-4 sm:px-6'>
+      <div className='pt-[60px] max-w-[1500px] m-auto md:pt-[30px] w-full  px-4 sm:px-6'>
         {/* Hero Section */}
-        <div className='flex flex-col lg:flex-row items-center justify-between min-h-[70vh] md:min-h-[90vh] gap-6 md:gap-8 py-8 md:py-12'>
+        <div className='flex md:w-[83%] w-full m-auto flex-col lg:flex-row items-center justify-between min-h-[70vh] md:min-h-[90vh] gap-6 md:gap-8 py-8'>
           <div className="w-full lg:w-[45%] max-w-2xl mx-auto text-center lg:text-left">
             <BoxReveal boxColor="#5046e6" duration={0.7}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900">
@@ -54,15 +55,18 @@ const Home = () => {
 
           {/* Image/Swiper Section */}
           <div className='w-full lg:w-[50%] relative mt-4 md:mt-0'>
-            <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-[#5046e6]/20 to-[#7c3aed]/20 rounded-xl md:rounded-3xl blur-md md:blur-lg opacity-75 animate-float"></div>
-            <div className="relative rounded-lg md:rounded-2xl overflow-hidden shadow-lg md:shadow-2xl border border-[#5046e6]/10">
+            <div className=" -inset-2 md:-inset-4 bg-gradient-to-r from-[#5046e6]/20 to-[#7c3aed]/20 rounded-xl md:rounded-3xl blur-md opacity-75 animate-float"></div>
+            <div className="relative rounded-lg md:rounded-2xl md:shadow-2xl border border-[#5046e6]/10">
               <MySwiper />
             </div>
           </div>
         </div>
+        <div>
+          <Section2/>
+        </div>
 
         {/* Categories Section */}
-        <div className='flex flex-col items-center gap-3 md:gap-[10px] my-8 md:my-[50px]'>
+        <div className='flex flex-col items-center gap-3 md:gap-[10px] my-5 md:my-[50px]'>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium font-sans text-center">
             Просмотр категории <span className="text-[#7c3aed]">заказов</span>
           </h1>
@@ -71,7 +75,7 @@ const Home = () => {
           </h1>
         </div>
 
-        <div>
+        <div className=''>
           <CartCategory />
         </div>
 

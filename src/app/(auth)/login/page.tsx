@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import ImgLogin from './img/freelancerThree.webp';
 import LayoutWrapper from '@/components/layoutWrapper';
 import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-button';
@@ -21,6 +21,8 @@ import { ArrowLeft } from 'lucide-react';
 const Login = () => {
   const [name, setName] = useAtom(addFirstNameAtom);
   const [password, setPassword] = useAtom(addPasswordAtom);
+  const [loading, setLoading] = useState(false);
+
 
   const goToOrders = () => {
     window.location.href = "/orders";
@@ -28,19 +30,17 @@ const Login = () => {
 
   const loginUser = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     if (name.length > 0 && password.length > 0) {
       try {
         const res = await axios.get(`https://43baa55b08d805d5.mokky.dev/user?name=${name}&password=${password}`);
         if (res.data && res.data.length > 0) {
           toast.success(`Добро пожаловать ${name}`);
-
           if (typeof window !== "undefined") {
             localStorage.setItem("acssec_token", res.data[0].id);
             localStorage.setItem("roleUser", res.data[0].roleUser);
-            localStorage.setItem("userId", res.data[0].userId);
           }
-
           setTimeout(() => {
             goToOrders();
           }, 1000);
@@ -54,6 +54,8 @@ const Login = () => {
     } else {
       toast.error('Пожалуйста, заполните все поля');
     }
+
+    setLoading(false); // Stop loading
   };
 
   return (
@@ -131,9 +133,10 @@ const Login = () => {
                       <Button
                         variant={"destructive"}
                         type="submit"
-                        className="w-full "
+                        className="w-full"
+                        disabled={loading} // disable button during loading
                       >
-                        Войти
+                        {loading ? "Загрузка..." : "Войти"}
                       </Button>
                     </form>
                     <div className="md:hidden block text-center pt-4">

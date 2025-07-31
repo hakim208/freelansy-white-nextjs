@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const CtaBanner = () => {
     return (
-        <div className="w-[90%] h-[400px] mx-auto relative overflow-hidden rounded-2xl shadow-xl my-12">
+        <div className="w-[83%] h-[400px] mx-auto relative overflow-hidden rounded-2xl shadow-xl my-12">
             <div className="absolute inset-0 bg-gradient-to-r from-[#5046e6] to-[#7c3aed] opacity-95"></div>
 
             <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-8">

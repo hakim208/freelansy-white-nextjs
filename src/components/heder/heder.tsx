@@ -16,6 +16,7 @@ import { BriefcaseIcon, UserIcon, Home, Grid, Info, Mail, User } from 'lucide-re
 const Header = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [roleUser, setRoleUser] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setUserId(localStorage.getItem("acssec_token"));
@@ -35,7 +36,7 @@ const Header = () => {
   ];
 
   return (
-    <header className='z-50 bg-white w-full p-[15px_0px] shadow-[0px_0px_10px_0px] shadow-gray-200 fixed'>
+    <header className='z-50  bg-white w-full p-[15px_0px] shadow-[0px_0px_10px_0px] shadow-gray-200 fixed'>
       <div>
         {!userId ? (
           <>
@@ -90,33 +91,33 @@ const Header = () => {
         ) : (
           <div className='w-[95%] md:w-[80%] mx-auto flex items-center justify-between'>
             <Link href={"/orders"}>
-              <Image src={Logo} width={100} height={30} alt='logo' priority />
+              <Image src={Logo} width={130} className='md:w-[130px] w-[60%]' height={50} alt='logo' priority />
             </Link>
 
             <div className='flex items-center gap-3'>
               <Link href="/create-order">
                 <Button variant="destructive" className='text-[10px] md:text-[15px] '>
                   {
-                    roleUser == "client" ? (<span>Создать заказ</span>):(<span>Мои заказы</span>)
+                    roleUser == "client" ? (<span>Создать заказ</span>) : (<span>Мои заказы</span>)
                   }
                 </Button>
               </Link>
 
-              <Link href="/messages" className="p-2 rounded-[50%] bg-gray-100 text-gray-600">
+              <Link href="/profil/messages" className="p-2 rounded-[50%] bg-gray-100 text-gray-600">
                 <Mail className="w-5 h-5" />
               </Link>
 
-              <Popover>
+              <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className="rounded-full w-9 h-9 p-0 bg-gray-100">
+                  <Button onClick={() => setOpen(!open)} variant="ghost" className="rounded-full w-9 h-9 p-0 bg-gray-100">
                     <User className="w-4 h-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2" align="end">
                   <div className="space-y-2 flex flex-col gap-[2px] ">
                     <div className={`p-2 rounded-md ${roleUser === "client"
-                        ? "bg-purple-50 text-purple-700"
-                        : "bg-orange-50 text-orange-700"
+                      ? "bg-purple-50 text-purple-700"
+                      : "bg-orange-50 text-orange-700"
                       }`}>
                       <div className="text-sm font-medium flex items-center gap-2 ">
                         {roleUser === "client" ? (
@@ -133,14 +134,17 @@ const Header = () => {
                       </div>
                     </div>
 
-                    <Link href="/profile">
-                      <Button variant="outline" size="sm" className="w-full">
+                    <Link href="/profil">
+                      <Button onClick={() => setOpen(false)} variant="outline" size="sm" className="w-full">
                         Профиль
                       </Button>
                     </Link>
 
                     <Button
-                      onClick={logout}
+                      onClick={() => {
+                        logout();
+                        setOpen(false);
+                      }}
                       variant="destructive"
                       size="sm"
                       className="w-full"
