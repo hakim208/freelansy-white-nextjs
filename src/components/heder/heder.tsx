@@ -91,12 +91,12 @@ const Header = () => {
         ) : (
           <div className='w-[95%] md:w-[80%] mx-auto flex items-center justify-between'>
             <Link href={"/orders"}>
-              <Image src={Logo} width={130} className='md:w-[130px] w-[60%]' height={50} alt='logo' priority />
+              <Image src={Logo} width={130} className='cursor-pointer md:w-[130px] w-[60%]' height={50} alt='logo' priority />
             </Link>
 
             <div className='flex items-center gap-3'>
               <Link href="/create-order">
-                <Button variant="destructive" className='text-[10px] md:text-[15px] '>
+                <Button variant="destructive" className='text-[10px] cursor-pointer md:text-[15px] '>
                   {
                     roleUser == "client" ? (<span>Создать заказ</span>) : (<span>Мои заказы</span>)
                   }
@@ -109,7 +109,11 @@ const Header = () => {
 
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                  <Button onClick={() => setOpen(!open)} variant="ghost" className="rounded-full w-9 h-9 p-0 bg-gray-100">
+                  <Button
+                    onClick={() => setOpen(!open)}
+                    variant="ghost"
+                    className="rounded-full w-9 h-9 p-0 bg-gray-100 cursor-pointer hover:bg-gray-200 transition"
+                  >
                     <User className="w-4 h-4" />
                   </Button>
                 </PopoverTrigger>
@@ -119,7 +123,7 @@ const Header = () => {
                       ? "bg-purple-50 text-purple-700"
                       : "bg-orange-50 text-orange-700"
                       }`}>
-                      <div className="text-sm font-medium flex items-center gap-2 ">
+                      <div className=" text-sm font-medium flex items-center gap-2 ">
                         {roleUser === "client" ? (
                           <>
                             <UserIcon className="h-4 w-4" />
@@ -134,8 +138,13 @@ const Header = () => {
                       </div>
                     </div>
 
-                    <Link href="/profil">
-                      <Button onClick={() => setOpen(false)} variant="outline" size="sm" className="w-full">
+                    <Link href="/profil" passHref>
+                      <Button
+                        onClick={() => setOpen(false)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full cursor-pointer"
+                      >
                         Профиль
                       </Button>
                     </Link>
@@ -147,7 +156,7 @@ const Header = () => {
                       }}
                       variant="destructive"
                       size="sm"
-                      className="w-full"
+                      className="w-full cursor-pointer"
                     >
                       Выйти
                     </Button>

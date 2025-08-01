@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from "next/link";
-import { ClipboardList, LogOut, MessageSquare, User } from "lucide-react";
+import {  LogOut, MessageSquare, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
@@ -35,7 +35,7 @@ const Sidebar = () => {
         <div>
             <div>
                 {/* Desktop Sidebar */}
-                <aside className="w-full hidden md:block border-r pr-[10px]  h-full min-h-screen">
+                <aside className="w-full hidden md:block h-full min-h-screen">
                     <nav className="flex flex-col gap-2 h-full">
                         <Link href="/profil" className={linkClasses("/profil")}>
                             <User className="w-5 h-5" />
@@ -45,11 +45,6 @@ const Sidebar = () => {
                             <MessageSquare className="w-5 h-5" />
                             <span>Сообщения</span>
                         </Link>
-                        <Link href="/profil/orders" className={linkClasses("/profil/orders")}>
-                            <ClipboardList className="w-5 h-5" />
-                            <span>Заказы</span>
-                        </Link>
-
                         <div className="flex-grow" />
 
                         <div
@@ -77,10 +72,6 @@ const Sidebar = () => {
                         <Link href="/profil/messages" className={mobileLinkClasses("/profil/messages")}>
                             <MessageSquare className="w-6 h-6" />
                             <span className="mt-1">Сообщения</span>
-                        </Link>
-                        <Link href="/profil/orders" className={mobileLinkClasses("/profil/orders")}>
-                            <ClipboardList className="w-6 h-6" />
-                            <span className="mt-1">Заказы</span>
                         </Link>
                         <div onClick={logout} className={mobileLinkClasses("/logout", true)}>
                             <LogOut className="w-6 h-6" />
