@@ -29,9 +29,11 @@ interface User {
 const AcceptProfilComponents: React.FC = () => {
   const [order, setOrder] = useState<User[]>([]);
   const [token, setToken] = useState<string | null>(null);
+  const [louding, setLouding] = useState<boolean >(false);
 
   useEffect(() => {
     const localToken = localStorage.getItem("acssec_token");
+    setLouding(true)
     setToken(localToken);
 
     if (!localToken) return;
@@ -40,9 +42,11 @@ const AcceptProfilComponents: React.FC = () => {
       try {
         const res = await axios.get<User[]>("https://43baa55b08d805d5.mokky.dev/user");
         setOrder(res.data);
+        setLouding(false)
       } catch (error) {
         console.error(error);
         toast.error("Ошибка при загрузке данных");
+        setLouding(false)
       }
     }
 
@@ -66,7 +70,7 @@ const AcceptProfilComponents: React.FC = () => {
       <div className="w-full">
         <Toaster />
 
-        {(userOrders?.acceptedWork?.length ?? 0) === 0 ? (
+        {louding ? (
           <div className="flex flex-col gap-4">
             <SkeletonCard />
             <SkeletonCard />
@@ -98,20 +102,7 @@ const AcceptProfilComponents: React.FC = () => {
               ))}
           </div>
         ) : (
-          <div className="w-full h-[250px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-6">
-            <svg
-              className="w-16 h-16 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
+          <div className="w-full h-[180px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-6">
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               У вас нет готовых заказов
             </h3>
@@ -119,14 +110,6 @@ const AcceptProfilComponents: React.FC = () => {
               Все выполненные заказы будут отображаться здесь.
               Начните работу над новым проектом или проверьте текущие задания.
             </p>
-            <div className="flex gap-3">
-              <button className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium">
-                Создать заказ
-              </button>
-              <button className="px-5 py-2.5 border border-gray-300 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors text-sm font-medium">
-                Проверить задания
-              </button>
-            </div>
           </div>
         )}
       </div>
