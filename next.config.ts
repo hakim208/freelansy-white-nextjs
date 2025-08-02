@@ -7,6 +7,7 @@ const nextConfig = {
   },
   images: {
     domains: [
+      'cdn.umnico.com',
       '43baa55b08d805d5.mokky.dev',
       'cdn-icons-png.flaticon.com',
       'images.icon-icons.com',

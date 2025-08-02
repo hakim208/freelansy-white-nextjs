@@ -1,15 +1,16 @@
 import ProtectedRoute from '@/components/protectedRoute/protectedRoute'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Clock, Shield, Zap, CheckCircle, Star } from "lucide-react"
+import { Users, Shield, Zap, CheckCircle, Star } from "lucide-react"
 import Link from "next/link"
+import AboutSection3 from '../components/aboutSection3'
+import OpinionSection from '../components/opinionSection'
 
 const Help = () => {
   return (
     <ProtectedRoute>
       <div className='pt-[50px] md:pt-[100px]'>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="min-h-screen bg-gradient-to-br">
           {/* Header */}
           <section className="py-20 px-4">
             <div className="container mx-auto max-w-4xl text-center">
@@ -82,43 +83,7 @@ const Help = () => {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Users className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Найти подходящего специалиста</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Большая база проверенных фрилансеров с рейтингами и отзывами для выбора лучшего исполнителя
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Clock className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Разместить заказ за пару минут</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Интуитивно понятный интерфейс позволяет быстро создать техническое задание и найти исполнителя
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Zap className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Начать работу без лишней бюрократии</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Минимум формальностей, максимум результата. Сосредоточьтесь на работе, а не на документах
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+              <AboutSection3 />
             </div>
           </section>
 
@@ -152,22 +117,8 @@ const Help = () => {
             </div>
           </section>
 
-          {/* CTA Section */}
-          <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-600">
-            <div className="container mx-auto max-w-4xl text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Готовы начать сотрудничество?</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                Присоединяйтесь к тысячам довольных пользователей и откройте новые возможности для развития
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/register">
-                    <button className="bg-white text-[#5046e6] hover:bg-gray-100 font-bold text-lg px-10 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                        Присоединиться
-                    </button>
-                </Link>
-              </div>
-            </div>
-          </section>
+          {/* Telegrambot */}
+         <OpinionSection/>
         </div>
       </div>
     </ProtectedRoute>
